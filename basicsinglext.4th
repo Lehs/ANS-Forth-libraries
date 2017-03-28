@@ -212,7 +212,7 @@ create pnr
   r> lower ;
 
 : primefactors \ u -- q1 q2 ... qn n  q1<=q2<=...<=qn
-  1 = if 0= exit then
+  dup 1 = if 0= exit then
   pollard# sort ;
 
 wordexist sp!
