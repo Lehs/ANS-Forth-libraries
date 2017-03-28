@@ -46,7 +46,7 @@ cell 8 * constant bits
   loop nip ;
 
 : sqrtf \ u -- floor
-  0 d>f fsqrt f>s ;
+  0 d>f fsqrt f>d drop ;
 
 : log~ \ n -- 1+log n    2-logarithm
   bits locals| lg |
