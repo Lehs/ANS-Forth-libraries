@@ -236,13 +236,13 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
 \ The product of all different prime factors of n
 
 : totients \ n -- t 
-  1 locals| tot |
+  1 locals| tot | 0 swap
   primefactors 0
   do 2dup =
      if tot * to tot
      else 1- tot * to tot
      then
-  loop tot ;
+  loop drop tot ;
 \ The number of integers k:1,...,n-1 
 \ whith gcd(k,n)=1
 
@@ -278,17 +278,17 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
 \ The number of different prime factors of n
 
 : tau \ u -- n
-  1 0 locals| m n |
+  1 0 locals| m n | 0 swap
   primefactors 0
   ?do 2dup =
      if m 1+ to m drop
      else drop m 2 + n * to n 0 to m
      then
-  loop n ;
+  loop drop n ;
 \ The number of divisors of u
 
 : sigma \ u -- s
-  1 1 locals| p s |
+  1 1 locals| p s | 0 swap
   primefactors 0
   ?do 2dup =
      if p * to p
@@ -296,7 +296,7 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
         s * to s
         1 to p
      then
-  loop s ;
+  loop drop s ;
 \ The sum of all divisors of u 
 
 : ** \ b e -- b^e 
@@ -308,7 +308,7 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
   ?do i * loop ;
 
 : sigma** \ u k -- s
-  1 1 locals| p s k |
+  1 1 locals| p s k | 0 swap
   primefactors 0
   ?do 2dup =
      if p * to p
@@ -316,7 +316,7 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
         s * to s
         1 to p
      then
-  loop s ;
+  loop drop s ;
 \ The sum of all kth powers of divisors of u 
 
 : -1** \ n -- i 
