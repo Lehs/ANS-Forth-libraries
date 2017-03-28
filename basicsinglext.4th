@@ -5,6 +5,11 @@
 
 cell 8 * constant bits
 
+: choose \ n k -- nCk
+  1 swap 0
+  ?do over i - i 1+ */
+  loop nip ;
+
 : sqrtf \ u -- floor
   0 d>f fsqrt f>s ;
 
