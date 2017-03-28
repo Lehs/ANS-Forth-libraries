@@ -276,7 +276,6 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
   pollard# dup >r drops r> ;
 \ The number of different prime factors of n
 
-
 : tau \ u -- n
   1 0 locals| m n |
   primefactors 0
@@ -331,7 +330,7 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
 : oddpart \ a -- i odd    a=odd*2^i
   0 swap
   begin 2/mod swap 0=
-  while 1 under+
+  while 1 rot + swap
   repeat 2* 1+ ;
 
 : legendre \ a p -- i    p odd prime
