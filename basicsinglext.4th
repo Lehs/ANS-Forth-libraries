@@ -212,6 +212,7 @@ create pnr
   r> lower ;
 
 : primefactors \ u -- q1 q2 ... qn n  q1<=q2<=...<=qn
+  1 = if 0= exit then
   pollard# sort ;
 
 wordexist sp!
@@ -279,7 +280,7 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
 : tau \ u -- n
   1 0 locals| m n |
   primefactors 0
-  do 2dup =
+  ?do 2dup =
      if m 1+ to m drop
      else drop m 2 + n * to n 0 to m
      then
@@ -289,7 +290,7 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
 : sigma \ u -- s
   1 1 locals| p s |
   primefactors 0
-  do 2dup =
+  ?do 2dup =
      if p * to p
      else dup dup * p * 1- swap 1- / 
         s * to s
@@ -309,7 +310,7 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
 : sigma** \ u k -- s
   1 1 locals| p s k |
   primefactors 0
-  do 2dup =
+  ?do 2dup =
      if p * to p
      else dup dup * p * k ** 1- swap k ** 1- / 
         s * to s
