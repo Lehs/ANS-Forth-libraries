@@ -1,4 +1,12 @@
 \ Basic number theoretic package, extension to ANS Forth
+\
+\ SP-Forth require
+\ S" lib/ext/caseins.f" INCLUDED
+\ S" ~af/lib/locals-ans.f" INCLUDED
+\ S" lib/include/double.f" INCLUDED
+\ S" lib/include/float2.f" INCLUDED
+\ CASE-INS ON
+\
 \ s" basicsinglext.4th" included
 \ Unsigned integer number theory basicsinglext.4th 
 \
@@ -11,8 +19,13 @@
 \ bigomega \ n -- b 
 \ smallomega \ n -- s
 \ legendre \ a p -- i
-\ tau \ u -- n    The number of divisors of u
-\ sigma \ u -- s  The sum of all divisors of u
+\ jacobi \ a n -- i
+\ kronecker \ a n -- i
+\ tau \ u -- n        The number of divisors of u
+\ sigma \ u -- s      The sum of all divisors of u
+\ sigma** \ u k -- s  The sum of the kth power of all divisors of u
+\ factorial \ n -- n!
+\ ** \ b n -- b^n
 \ choose \ n k -- nCk
 \ sqrtf \ u -- floor
 \ log~ \ n -- 1+log n
@@ -263,12 +276,6 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
   pollard# dup >r drops r> ;
 \ The number of different prime factors of n
 
-: legendre \ a p -- i    p odd prime
-  tuck dup 1- 2/ swap u**mod dup 1 >
-  if swap - else nip then ;
-\ (a/p)=1 if exist n with n^2=a(mod p) and a<>0
-\ (a/p)=-1 if not exist n with n^2=a(mod p)
-\ (a/p)=0 if a=0(mod p)
 
 : tau \ u -- n
   1 0 locals| m n |
@@ -291,3 +298,81 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
      then
   loop s ;
 \ The sum of all divisors of u 
+
+: ** \ b e -- b^e 
+  dup 0= if 2drop 1 exit then
+  1 swap 0 do over * loop nip ;
+
+: factorial \ n -- n!
+  1+ 1 swap 1
+  ?do i * loop ;
+
+: sigma** \ u k -- s
+  1 1 locals| p s k |
+  primefactors 0
+  do 2dup =
+     if p * to p
+     else dup dup * p * k ** 1- swap k ** 1- / 
+        s * to s
+        1 to p
+     then
+  loop s ;
+\ The sum of all kth powers of divisors of u 
+
+: -1** \ n -- i 
+  1 and if -1 else 1 then ;
+  
+: unit* \ i j -- k 
+  xor 1+ ;
+  
+: 2/mod \ n -- r q
+  dup 1 and swap 1 rshift ;
+
+: oddpart \ a -- i odd    a=odd*2^i
+  0 swap
+  begin 2/mod swap 0=
+  while 1 under+
+  repeat 2* 1+ ;
+
+: legendre \ a p -- i    p odd prime
+  tuck dup 1- 2/ swap u**mod dup 1 >
+  if swap - else nip then ;
+\ (a/p)=1 if exist n with n^2=a(mod p) and a<>0
+\ (a/p)=-1 if not exist n with n^2=a(mod p)
+\ (a/p)=0 if a=0(mod p)
+
+: jacobi \ a n -- j 
+  1 locals| unit n a |
+  a n ugcd 1 = 0= if 0 exit then 
+  begin n 1 = a 1 = or if unit exit then
+     a n mod ?dup 0= if 0 exit then
+     oddpart to a 1 and
+     if n dup * 1- 3 rshift -1** unit unit* to unit 
+     then a n ugcd 1 = 0= if 0 exit then
+     n a to n to a
+     a 1- n 1- * 2 rshift -1** unit unit* to unit
+  again ; 
+
+: kronecker \ a n -- j 
+  0 locals| unit n a |
+  n 0= if a abs 1 = if 1 else 0 then exit then
+  n dup abs to n 0<
+  if a 0< if -1 else 1 then
+  else 1
+  then to unit
+  a dup abs to a \ old_a
+  n oddpart to n dup \ old_a i i
+  if a 1 and 0= \ old_a i f
+     if 2drop 0 exit 
+     else 1 and \ old_a f
+        if a 7 and 1+ 4 and \ old_a
+           if unit negate to unit then \ old_a
+        then
+     then
+  else drop
+  then a n jacobi ?dup 0=
+  if drop 0 exit then
+  unit unit* to unit \ old_a
+  0< if n 1- 2/ -1** else 1 then 
+  unit unit* ;
+
