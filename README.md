@@ -2,11 +2,17 @@
 Minimalist libraries as extensions to ANS Forth
 
 basicsinglext.4th 
+
 Unsigned integer number theory:
+
 isprime \ u -- flag
+
 nextprime \ u -- p
+
 primefactors \ u -- q1 q2 ... qn n
+
 radical \ n -- r
+
 totients \ n -- t
 mobius \ n -- m
 bigomega \ n -- b 
