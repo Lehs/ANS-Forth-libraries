@@ -236,13 +236,13 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
 \ The product of all different prime factors of n
 
 : totients \ n -- t 
-  1 locals| tot | 0 swap
+  1 locals| tot | 
   primefactors 0
   do 2dup =
      if tot * to tot
      else 1- tot * to tot
      then
-  loop drop tot ;
+  loop tot ;
 \ The number of integers k:1,...,n-1 
 \ whith gcd(k,n)=1
 
