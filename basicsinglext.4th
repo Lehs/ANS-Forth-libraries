@@ -40,6 +40,9 @@
 
 cell 8 * constant bits
 
+: 2/mod \ n -- r q
+  dup 1 and swap 1 rshift ;
+
 : choose \ n k -- nCk
   1 swap 0
   ?do over i - i 1+ */
@@ -98,9 +101,6 @@ cell 4 =
      if 0= leave then 2
   +loop nip ;
 [else]
-: 2/mod \ n -- r q
-  dup 1 and swap 1 rshift ;
-
 : get-rs \ numb r -- r s     numb odd
   0 locals| r numb | 
   numb 1-
@@ -326,9 +326,6 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
 : unit* \ i j -- k 
   xor 1+ ;
   
-: 2/mod \ n -- r q
-  dup 1 and swap 1 rshift ;
-
 : oddpart \ a -- i odd    a=odd*2^i
   0 swap
   begin 2/mod swap 0=
@@ -376,4 +373,3 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
   unit unit* to unit \ old_a
   0< if n 1- 2/ -1** else 1 then 
   unit unit* ;
-
