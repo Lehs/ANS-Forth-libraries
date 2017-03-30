@@ -1,6 +1,8 @@
 \ unsigned natural numbers of dynamical length in 32+ bit ANS Forth
 \ forthmath.blogspot.se
 
+s" numbertheory.4th" included
+
 : ?undef ( -- flag ) bl word find nip 0= ;
 \ flag is true if word undefined
 
@@ -782,58 +784,16 @@ variable flag22
 \ xsi^[s*2^j]=-1[mod u]
 \ then u is pseudoprime.
 
-: bprime \ b -- flag
+: bisprime \ b -- flag
   len1 cell >
   if bmiller bdrop
-  else b>s prime
+  else b>s isprime
   then ;
 
 : bnextprime \ b -- p
   b1or
-  begin bdup bprime 0=
+  begin bdup bisprime 0=
   while b2+
   repeat ;
-  
-\ testing for small (fast) single number divisors
-\ of big number w in the intervall n,m-1
-: sfac \ w -- w ?v | m n -- f
-  beven if 2drop 2 bdup b2/ exit then
-  0 locals| flag |
-  do bdup i pnr@ bs/mod 0=
-     if i pnr@ to flag leave then bdrop
-  loop flag ;
-
-1k bvariable alpha
-1k bvariable beta
-
-: bpollard1 \ w -- v | a -- f
-  len1 cell = if drop b>s pollard2 s>b true exit then
-  s>b bdup alpha b! beta b! bzero true
-  begin bdrop
-     alpha b@ bdup b* b1+ bover bmod alpha b!
-     beta b@ bdup b* b1+ bover bmod
-     bdup b* b1+ bover bmod beta b!
-     alpha b@ beta b@ |b-|
-     bover
-     bgcd
-     br= if bdrop 0= exit then
-     bone br= bdrop 0=
-  until bnip ;
-
-: bpollard2 \ w -- v
-  bdup bprime if exit then
-  pi_plim 1 sfac ?dup if bdrop bdrop s>b exit then
-  0 begin 1+ dup bpollard1 until drop ;
-
-: bfac1 \ w -- v1...vn
-  bdup bpollard2
-  bone br= bdrop
-  if bdrop exit
-  then btuck b/ recurse ;
-
-: bfac bfac1 bdrop ;
-
-: bfac# \ w -- v1...vn | -- n
-  bdepth 1- bfac bdepth swap - ;
 
 base !
