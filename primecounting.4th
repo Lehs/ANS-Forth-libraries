@@ -1,5 +1,7 @@
 \ Prime counting via the sieve of Eratosthenes
 
+s" numbertheory.4th" included
+
 : 8/mod \ n -- r q
   dup 7 and swap 3 rshift ;
 
