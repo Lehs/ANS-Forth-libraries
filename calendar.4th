@@ -1,4 +1,4 @@
-\ Calendar functions, ANS-Forth
+\ Modified Julian calendar functions, ANS-Forth
 
 : mjd \ y m d -- mjd
   swap rot
