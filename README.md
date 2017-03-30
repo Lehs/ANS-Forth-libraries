@@ -1,5 +1,7 @@
 **Minimalist libraries, extensions to ANS Forth**
 
+(*Free to use by all means*)
+
 bigintegers.4th - Stackbased unsigned big operations
 
 calendar.4th - Modified Julian calendar
