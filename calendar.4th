@@ -28,7 +28,7 @@
 
 : dow$ \ m -- ad n
   2 lshift 
-  s" Sun Mon Tue Wed Thu Fre Sat " 
+  s" Sun Mon Tue Wed Thu Fri Sat " 
   drop + 4 ;
 \ name of day of week
 
