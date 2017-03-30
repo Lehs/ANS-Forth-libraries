@@ -794,6 +794,7 @@ variable flag22
   b1or
   begin bdup bisprime 0=
   while b2+
-  repeat ;
+  repeat ; 
 
 base !
+
