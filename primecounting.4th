@@ -168,4 +168,4 @@ wordexist pi [if] : fpi pi ; [then]
   >r pi_plim 1+ 0  \ x < plim
   begin r@ newintpnr 2dup - 2 u< \ i j flag
   until rdrop nip ;
-\ number of primes less than or equal than x
+\ number of primes less than or equal than x 
