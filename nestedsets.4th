@@ -3,6 +3,32 @@
 : log~ \ n -- #binary digits
   0 swap begin swap 1+ swap 1 rshift ?dup 0= until ;
 
+: -cell cell negate ;
+
+\ Sorting the stack
+
+: lower \ m1 ... mn m n+1 -- m1 ... m ... mi n+1
+\ lower m on stack until next number not is greater
+  dup 2 =
+  if drop 2dup u>
+     if swap
+     then 2 exit
+  then >r 2dup u> 0=
+  if r> exit
+  then r> rot >r
+  1- recurse 1+ r> swap ;
+
+: sort \ m1 ... mn n -- s1 ... sn n o(n²)
+  dup 3 <
+  if dup 2 =
+     if drop 2dup u>
+        if swap
+        then 2
+     then exit
+  then dup >r
+  1- recurse roll
+  r> lower ;
+
 \ Stacks_____
 
 : cs negate 2/ ;
@@ -519,12 +545,6 @@ true value sort?
 : 1mod4 4 mod 1 = ;
 : 3mod4 4 mod 3 = ;
 
-: 2sqrsum dup 0
-  ?do dup i dup * - dup
-     0< if drop false leave then
-     sqr if true leave then
-  loop nip ;
-
 \ 30 70 | odd
 : | \ m n -- x1...xk
   swap ' locals| xt |
@@ -647,4 +667,3 @@ variable cf2
   case 0 of xt setimage endof
        1 of nr xt set2image endof
   endcase ;
-
