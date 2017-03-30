@@ -1,5 +1,4 @@
-ANS-Forth-libraries
-**Minimalist libraries, extensions to ANS Forth**
+**ANS-Forth-libraries - Minimalist libraries, extensions to ANS Forth**
 
 numbertheory.4th - Basic unsigned single words on number theory 
 
