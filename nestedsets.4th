@@ -1,7 +1,7 @@
 \ NESTED SETS WITH CARTESIAN PRODUCTS
 
 : log~ \ n -- #binary digits
-  0 swap begin swap 1+ swap u2/ ?dup 0= until ;
+  0 swap begin swap 1+ swap 1 rshift ?dup 0= until ;
 
 \ Stacks_____
 
