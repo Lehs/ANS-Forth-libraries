@@ -3,8 +3,7 @@
 
 s" numbertheory.4th" included
 
-: ?undef ( -- flag ) bl word find nip 0= ;
-\ flag is true if word undefined
+: wordexist bl word find nip ;
 
 base @ hex
 
@@ -13,13 +12,13 @@ base @ hex
 : 0! 0 swap ! ;
 : 1+! 1 swap +! ;
 : u2/ 1 rshift ;
-?undef u/ [if] : u/ 0 swap um/mod nip ; [then]
-?undef umod [if] : umod 0 swap um/mod drop ; [then]
-?undef cell- [if] : cell- cell - ; [then]
-?undef rdrop [if] : rdrop r> drop ; [then]
-?undef .r [if] : .r >r 0 <# #S #> r> over - spaces type ; [then]
-?undef s>f [if] : s>f s>d d>f ; [then]
-?undef f>s [if] : f>s f>d d>s ; [then]
+wordexist u/ 0= [if] : u/ 0 swap um/mod nip ; [then]
+wordexist umod 0= [if] : umod 0 swap um/mod drop ; [then]
+wordexist cell- 0= [if] : cell- cell - ; [then]
+wordexist rdrop 0= [if] : rdrop r> drop ; [then]
+wordexist .r 0= [if] : .r >r 0 <# #S #> r> over - spaces type ; [then]
+wordexist s>f 0= [if] : s>f s>d d>f ; [then]
+wordexist f>s 0= [if] : f>s f>d d>s ; [then]
 
 : d256*  \ ud -- 256ud
   over 8 lshift rot 0FF000000 and 018 rshift
@@ -60,19 +59,44 @@ cell log~ 1- constant lcell
 
 \ extra stacks for singel numbers
 
-: clst ( ad -- )  dup ! ;
-: stdrops ( m ad -- )  swap cells negate swap +! ;
-: stdrop ( ad -- ) -cell swap +! ;
-: >st ( n ad -- )  cell over +! @ ! ;
-: st> ( ad -- n )  dup @ @ -cell rot +! ;
-: >st> ( n ad -- m )  dup @ @ -rot @ ! ;
-: st@ ( ad -- n )  @ @ ;
-: st! ( n ad -- )  @ ! ;
-: st+! ( n ad -- )  @ +! ;
-: stpick ( m ad -- xm )  @ swap cells - @ ;
-: stpatch ( n m ad -- )  @ swap cells - ! ;
-: stpatad ( n m ad -- )  @ swap cells - +! ;
-: stdepth ( ad -- n )  dup @ swap - lcell rshift ;
+: clst \ ad -- 
+  dup ! ;
+
+: stdrops \ m ad -- 
+  swap cells negate swap +! ;
+  
+: stdrop \ ad -- 
+  -cell swap +! ;
+  
+: >st \ n ad -- 
+  cell over +! @ ! ;
+  
+: st> \ ad -- n 
+  dup @ @ -cell rot +! ;
+  
+: >st> \ n ad -- m 
+  dup @ @ -rot @ ! ;
+
+: st@ \ ad -- n 
+  @ @ ;
+  
+: st! \ n ad -- 
+  @ ! ;
+  
+: st+! \ n ad -- 
+  @ +! ; 
+
+: stpick \ m ad -- xm 
+  @ swap cells - @ ;
+  
+: stpatch \ n m ad -- 
+  @ swap cells - ! ;
+  
+: stpatad \ n m ad -- 
+  @ swap cells - +! ;
+  
+: stdepth \ ad -- n 
+  dup @ swap - lcell rshift ;
 
 : .st \ ad --
   dup @ cell+ swap cell+
@@ -89,38 +113,84 @@ cell log~ 1- constant lcell
 
 2k stack xs
 
-: >xs ( n -- )  xs >st ;
-: xs> ( -- n )  xs st> ;
-: >xs> ( m -- n)  xs >st> ;
-: xs@ ( -- n )  xs st@ ;
-: xs! ( n -- )  xs st! ;
-: xs+! ( n -- )  xs st+! ;
-: xsdrop ( -- )  xs stdrop ;
-: xsdepth ( -- #bytes )  xs stdepth ;
+: >xs \ n -- 
+  xs >st ;
+  
+: xs> \ -- n 
+  xs st> ;
+  
+: >xs> \ m -- n
+  xs >st> ;
+  
+: xs@ \ -- n 
+  xs st@ ;
+  
+: xs! \ n -- 
+  xs st! ;
+  
+: xs+! \ n -- 
+  xs st+! ;
+  
+: xsdrop \ -- 
+  xs stdrop ;
+  
+: xsdepth \ -- #bytes 
+  xs stdepth ;
 
 2k stack ys
 
-: >ys ( n -- )  ys >st ;
-: ys> ( -- n )  ys st> ;
-: >ys> ( m -- n)  ys >st> ;
-: ys@ ( -- n )  ys st@ ;
-: ys! ( n -- )  ys st! ;
-: ys+! ( n -- )  ys st+! ;
-: ysdrop ( -- )  ys stdrop ;
-: ysdepth ( -- n )  ys stdepth ;
+: >ys \ n -- 
+  ys >st ;
+  
+: ys> \ -- n 
+  ys st> ;
+  
+: >ys> \ m -- n
+  ys >st> ;
+  
+: ys@ \ -- n 
+  ys st@ ;
+  
+: ys! \ n -- 
+  ys st! ;
+  
+: ys+! \ n -- 
+  ys st+! ;
+  
+: ysdrop \ -- 
+  ys stdrop ;
+
+: ysdepth \ -- n 
+  ys stdepth ;
 
 2k stack zs
 
-: >zs ( n -- )  zs >st ;
-: zs> ( -- n )  zs st> ;
-: >zs> ( m -- n)  zs >st> ;
-: zs@ ( -- n )  zs st@ ;
-: zs! ( n -- )  zs st! ;
-: zs+! ( n -- )  zs st+! ;
-: zsdrop ( -- )  zs stdrop ;
-: zsdepth ( -- n )  zs stdepth ;
+: >zs \ n -- 
+  zs >st ;
+  
+: zs> \ -- n 
+  zs st> ;
+  
+: >zs> \ m -- n
+  zs >st> ;
+  
+: zs@ \ -- n 
+  zs st@ ;
+  
+: zs! \ n -- 
+  zs st! ;
+  
+: zs+! \ n -- 
+  zs st+! ;
+  
+: zsdrop \ --
+  zs stdrop ;
+  
+: zsdepth \ -- n 
+  zs stdepth ;
 
-: drop-all ( -- )  xsdrop ysdrop zsdrop ;
+: drop-all \ -- 
+  xsdrop ysdrop zsdrop ;
 
 \ pseudo random numbers
 
@@ -169,22 +239,44 @@ pad1 + cell - constant pad2
 
 vst!   \ initialize stack för dynamical numbers
 
-: nextfree ( -- a )  bvp @ @ ;
-: first ( -- a )  bvp @ cell + @ ;  \ big on tos
-: second ( -- a )  bvp @ 2 cells + @ ;  \ big on second
-: third ( -- a )  bvp @ 3 cells + @ ;  \ big on third
-: vp+ ( -- )  -cell bvp +! ;    \ stack pointer
+: nextfree \ -- a 
+  bvp @ @ ;
+  
+: first \ -- a 
+  bvp @ cell + @ ;  \ big on tos
+  
+: second \ -- a
+  bvp @ 2 cells + @ ;  \ big on second
+  
+: third \ -- a 
+  bvp @ 3 cells + @ ;  \ big on third
+
+: vp+ \ -- 
+  -cell bvp +! ;    \ stack pointer
 
 : tov \ ad --    ad of number array to stack
   vp+ bvp @ ! ;
 
-: bempty ( -- f )  nextfree v$0 = ;
-: len1 ( -- n )  nextfree first - ;  \ get length to first
-: len2 ( -- n )  first second - ;
-: len3 ( -- n )  second third - ;
-: top$ ( -- a n )  first len1 ;
-: sec$ ( -- a n )  second len2 ;
-: thi$ ( -- a n )  third len3 ;
+: bempty \ -- f 
+  nextfree v$0 = ;
+  
+: len1 \ -- n 
+  nextfree first - ;  \ get length to first
+  
+: len2 \ -- n 
+  first second - ;
+  
+: len3 \ -- n 
+  second third - ;
+  
+: top$ \ -- a n 
+  first len1 ;
+  
+: sec$ \ -- a n 
+  second len2 ;
+  
+: thi$ \ -- a n 
+  third len3 ;
 
 : vdigit \ n --    put single "digit" on stack
   nextfree tuck ! cell+ tov ;
@@ -231,31 +323,65 @@ vst!   \ initialize stack för dynamical numbers
   2@ bpusha ;
 
 : xstack!  x0 cell - xp ! x$0 xp @ ! ; xstack!  \ xtra stack
-: xp+ ( -- )  -cell xp +! ;
-: tox ( a -- )  xp+ xp @ ! ;
-: xnext ( -- ad )  xp @ @ ;
-: xfirst ( -- ad )  xp @ cell+ @ ;
-: xsecond ( -- ad )  xp @ 2 cells + @ ;
-: xthird ( -- ad )  xp @ 3 cells + @ ;
-: xlen ( -- n )  xnext xfirst - ;
-: xpush ( a n -- ) rez >xs xnext xs@ over + tox xs> cmove ;
 
-: bxpush ( a n -- ) >xs xnext xs@ over + tox xs> cmove ;
+: xp+ \ -- 
+  -cell xp +! ;
+  
+: tox \ a -- 
+  xp+ xp @ ! ;
+  
+: xnext \ -- ad 
+  xp @ @ ;
+  
+: xfirst \ -- ad
+  xp @ cell+ @ ;
+  
+: xsecond \ -- ad 
+  xp @ 2 cells + @ ;
+  
+: xthird \ -- ad 
+  xp @ 3 cells + @ ;
+  
+: xlen \ -- n 
+  xnext xfirst - ;
+  
+: xpush \ a n -- 
+  rez >xs xnext xs@ over + tox xs> cmove ;
+
+: bxpush \ a n -- 
+  >xs xnext xs@ over + tox xs> cmove ;
+  
 : xdrop  cell xp +! ;
-: xempty ( -- f )  xnext x$0 = ;
 
-: >bx ( v -- )  top$ bxpush bdrop ;
-: bx! ( v -- v )  top$ bxpush ;
-: bx  ( -- v )  xfirst xnext over - bpusha ;
-: bx> ( -- v )  bx xdrop ;
+: xempty \ -- f 
+  xnext x$0 = ;
+
+: >bx \ v -- 
+  top$ bxpush bdrop ;
+  
+: bx! \ v -- v 
+  top$ bxpush ;
+  
+: bx  \ -- v 
+  xfirst xnext over - bpusha ;
+  
+: bx> \ -- v 
+  bx xdrop ;
 
 : by  \ -- v  y is the second value on x-stack
   xsecond xfirst over - bpusha ;
 
-: bz  ( -- v )  xthird xsecond over - bpusha ;
-: v>x ( v -- )  top$ bdrop xpush ;
-: vx  ( -- v )  xfirst xnext over - vpush ;
-: vx> ( -- v )  vx xdrop ;
+: bz  \ -- v 
+  xthird xsecond over - bpusha ;
+  
+: v>x \ v -- 
+  top$ bdrop xpush ;
+  
+: vx  \ -- v 
+  xfirst xnext over - vpush ;
+  
+: vx> \ -- v 
+  vx xdrop ;
 
 : vy  \ -- v
   xsecond xfirst over - vpush ;
@@ -335,7 +461,8 @@ vst!   \ initialize stack för dynamical numbers
   loop xsdepth swap - 0 tuck
   do 2* xs> + loop ys> swap ;
 
-: nth ( n -- b/0 )  1+ bvp @ swap cells +
+: nth \ n -- b/0 
+  1+ bvp @ swap cells +
   dup b0 = if drop 0 else @ then ;
 
 : len# \ n -- m
@@ -345,7 +472,8 @@ vst!   \ initialize stack för dynamical numbers
 : bpick \ bn ... b0 -- bn ... b0 bm | m --
   dup nth swap len# bpusha ;
 
-: xnth ( n -- b/0 )  1+ xp @ swap cells +
+: xnth \ n -- b/0 
+  1+ xp @ swap cells +
   dup x0 = if drop 0 else @ then ;
 
 : xlen# \ n -- m
@@ -451,7 +579,8 @@ vst!   \ initialize stack för dynamical numbers
 : b>v  \ b -- b v
   b>v$ vpush ;
 
-: bdec# ( b -- b | -- n )  b>v$ nip ;
+: bdec# \ b -- b | -- n 
+  b>v$ nip ;
 
 : br. \ b -- b
   b>v$ type space ;
@@ -686,12 +815,7 @@ variable foo
   br< if bswap then
   begin btuck bmod br0=
   until bdrop ;
-false [if]
-: gcd \ m n -- d
-  2dup u< if swap then
-  begin tuck 0 swap um/mod drop dup 0=
-  until drop ;
-[then]
+
 : blcm \ v u -- w  least common multiple
   bover bover b* brot brot bgcd b/ ;
 
