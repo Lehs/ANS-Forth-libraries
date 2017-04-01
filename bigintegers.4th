@@ -15,7 +15,6 @@ base @ hex
 wordexist u/ 0= [if] : u/ 0 swap um/mod nip ; [then]
 wordexist umod 0= [if] : umod 0 swap um/mod drop ; [then]
 wordexist cell- 0= [if] : cell- cell - ; [then]
-wordexist rdrop 0= [if] : rdrop r> drop ; [then]
 wordexist .r 0= [if] : .r >r 0 <# #S #> r> over - spaces type ; [then]
 wordexist s>f 0= [if] : s>f s>d d>f ; [then]
 wordexist f>s 0= [if] : f>s f>d d>s ; [then]
@@ -921,4 +920,3 @@ variable flag22
   repeat ; 
 
 base !
-
