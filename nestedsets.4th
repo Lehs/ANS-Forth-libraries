@@ -666,5 +666,5 @@ variable cf2
   cf 0< if xt pairimage exit then k
   case 0 of xt setimage endof
        1 of nr xt set2image endof
-  endcase ;
+  endcase ; 
   
