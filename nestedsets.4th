@@ -239,7 +239,7 @@ cell 1- log~ constant cellshift
   case 0 of -2 r@ >stack endof
        1 of r@ stack@ 1- r@ >stack endof
        2 of r@ stack@ 2 - r@ >stack endof
-  endcase rdrop ;
+  endcase r> drop ;
 
 : xfence xst _fence ;
 : yfence yst _fence ;
@@ -667,3 +667,4 @@ variable cf2
   case 0 of xt setimage endof
        1 of nr xt set2image endof
   endcase ;
+  
