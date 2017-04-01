@@ -155,7 +155,7 @@ breaknumbers cells allocate throw constant breaks
   1- dup >r 2* pnrbuf + 2 mb@
   breaknumbers 0
   begin r@ newintbreaks 2dup - 2 u<
-  until rdrop nip 16 lshift + ;
+  until r> drop nip 16 lshift + ;
 \ nth prime
 
 : newintpnr \ i j x -- i' j' 
@@ -167,5 +167,6 @@ wordexist pi [if] : fpi pi ; [then]
 : pi \ x -- n 
   >r pi_plim 1+ 0  \ x < plim
   begin r@ newintpnr 2dup - 2 u< \ i j flag
-  until rdrop nip ;
+  until r> drop nip ;
 \ number of primes less than or equal than x 
+
