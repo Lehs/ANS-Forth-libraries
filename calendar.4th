@@ -166,5 +166,5 @@ create doy% 0 , 11 cells allot
   repeat nip ;
 
 : easter \ y -- mjd
-  equinox nextfm 0 swap nextdow ;
+  equinox 1+ nextfm 1+ 0 swap nextdow ;
 \ The Christian Easter
