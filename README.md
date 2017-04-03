@@ -12,5 +12,7 @@ numbertheory.4th - Basic unsigned single words on number theory
 
 primecounting.4th - Fast primes, squeezed prime tables
 
+signedbig.4th - Signed big integers
+
 stringstack.4th - Stack and stackoperations for strings
 
