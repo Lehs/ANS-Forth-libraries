@@ -141,7 +141,7 @@ create doy% 0 , 11 cells allot
   fover f* 
   fswap fdup f*
   102.026e-12 f* f+
-  20.362955e f+ f>s
+  20.362955e f+ fround f>s
   mjd2k + ; 
 \ n is the number of full moons since 
 \ the first full moon after 2000 1 1 0 0 0
