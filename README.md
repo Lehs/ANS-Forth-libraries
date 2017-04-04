@@ -16,5 +16,7 @@ primecounting.4th - Fast primes, squeezed prime tables
 
 signedbig.4th - Signed big integers
 
+simplestring.4th - Storing and concatenating strings
+
 stringstack.4th - Stack and stackoperations for strings
 
