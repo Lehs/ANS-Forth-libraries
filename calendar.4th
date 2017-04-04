@@ -1,29 +1,6 @@
 \ Calendar functions
 
-\ String extensions
-: c+! \ c adr -- 
-  tuck c@ + swap c! ;
-  
-: c1+! \ adr -- 
-  1 swap c+! ;
-  
-: string! \ ad n adr -- 
-  >r dup r@ c! r> 1+ swap move ;
-  
-: string& \ ad n cadr -- 
-  >r tuck r@ count + swap move r> c+! ;
-  
-: char& \ ch cad -- 
-  tuck count + c! c1+! ;
-  
-: space& \ cad -- 
-  bl swap char& ;
-  
-: unum& \ u cad -- 
-  swap 0 <# #s #> string& ;
-  
-: num& \ n cad -- 
-  swap dup abs 0 <# #s rot sign #> string& ;
+s" simplestring.4th" included
 
 : mjd \ y m d -- mjd
   swap rot
