@@ -27,7 +27,7 @@ base !
 : v or ;
 : <+> xor ;
 
-: istautology true <> if ."  not" then ;
+: istautology true = ;
 
 \ examples:
 \ p q v p -> istautology
