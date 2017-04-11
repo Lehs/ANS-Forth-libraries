@@ -225,6 +225,8 @@ variable xp
 02000 dup allocate throw constant pad1
 pad1 + cell - constant pad2
 
+0400 allocate throw constant pad3
+
 : rez \ a n -- a' n'  delete leading zero ascii 48
   dup 1 =
   if exit
@@ -493,9 +495,9 @@ vst!   \ initialize stack för dynamical numbers
   do i nth 0= if i leave then loop ;
 
 : v>b  \ convert asc-number to digital bignumber
-  pad 1k 2dup + pad
+  pad1 1k 2dup + pad1
   do v>byte i c!
-     if drop i 1+ 0! i pad - 1+ cell+ leave then
+     if drop i 1+ 0! i pad1 - 1+ cell+ leave then
   loop bdrop bpush <top ;
 
 : s>b \ -- v | n --  convert single to big
