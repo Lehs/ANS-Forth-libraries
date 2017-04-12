@@ -1,4 +1,96 @@
 \ NESTED SETS WITH CARTESIAN PRODUCTS
+false [if]
+Sets may have non negative numbers and sets as elements. 
+The number 0 also denotes the empty set.
+Writing
+
+{ 1 2 3 { 1 2 3 4 } 0 { } } 
+
+give the output
+
+{1,2,3,{1,2,3,4},0}
+
+with the command 
+
+zet. \ set --
+
+To see if two sets are equal
+
+{ 1 2 { 3 } } 
+{ 1 2 { { 3 } } }
+
+use
+
+zet= \ set1 set2 -- flag
+
+To test if an element is a member
+
+member \ element set -- flag
+
+{ 2 3 } { 1 2 3 { 2 4 } { 2 3 } } member
+
+All argument should be on the zst-stack.
+If the element is a number, it must be pushed there
+
+3 >zst { 1 2 3 { 2 4 } { 2 3 } } member
+
+while all sets automatically is put there.
+
+A number on the data stack can be tested by
+
+smember \ n -- flag | set --
+
+3 { 1 2 3 { 2 4 } { 2 3 } } smember 
+
+or
+
+{ 1 2 3 { 2 4 } { 2 3 } } 3 smember
+
+Since the number and the set is transfered to different stacks,
+the order doesn't matter.
+
+Other words are used likewise:
+
+subset \ set1 set2 -- flag
+union \ set1 set2 -- set3
+intersection \ set1 set2 -- set3
+diff \ set1 set2 -- set3
+cardinality \ set -- numb of elements
+powerset \ set -- set of all subsets
+power# \ n -- | set1 -- set2
+
+{ 1 2 3 4 } 2 power#
+
+gives the set of all subsets with 2 elements
+
+{{1,2},{1,3},{1,4},{2,3},{2,4},{3,4}}
+
+Warning! Both powerset and power# my easy cause overflow.
+
+Sets are unordered collections of different elements, so i.e. {2,3,2,2,1}={1,2,3}.
+There are also unordered collections of any elements implemented
+
+( 1 2 ( 3 { 4 5 4 } 6 ) 7 1 ) zet.
+(1,2,(3,{4,5},6),7,1) ok
+
+The cartesian product
+
+cartprod \ set1 set2 -- set3
+
+{ 1 2 3 } { 3 4 } cartprod zet.
+{(3,4),(3,3),(2,4),(2,3),(1,4),(1,3)} ok
+
+Numbers in a set are sorted automatically, 
+but not elements which are sets or sequences.
+
+For defined words TEST \ n -- flag 
+as for example ISPRIME 
+
+{ 1 20 | isprime } zet.
+{2,3,5,7,11,13,17,19} ok
+
+For more i formation, see https://forthmath.blogspot.se
+[then]
 
 : log~ \ n -- #binary digits
   0 swap begin swap 1+ swap 1 rshift ?dup 0= until ;
