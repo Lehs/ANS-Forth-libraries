@@ -1,5 +1,33 @@
 \ unsigned natural numbers of dynamical length in 32+ bit ANS Forth
 \ forthmath.blogspot.se
+false [if]
+Big number operations use big number stacks:
+
+b 12345678901234567890123456789012345678901234567890 ok
+
+and the operations are similar to the ordinary arithmetic in Forth:
+
+b+ b- b* b/ b/mod bmod b= b< b0= b0< blshift brshift band bor bxor etc.
+
+There are also words
+
+b*mod \ b1 b2 b3 -- b1*b2(mod b3)
+b** \ b1 b2 -- b1^b2
+b**mod \ b1 b2 b3 -- b1^b2(mod b3)
+binvmod \ b1 b2 -- b3
+bfactorial \ b -- b!
+blegendre \ b p -- i
+bgcd \ b1 b2 -- gcd
+bsqrtf \ b -- b'
+bsqrtc \ b -- b'
+bisprime \ b -- flag
+bnextprime \ b -- p
+
+b. print the top of the stack
+.b print the whole stack
+
+More information on https://forthmath.blogspot.se
+[then]
 
 s" numbertheory.4th" included
 
