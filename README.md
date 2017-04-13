@@ -2,6 +2,8 @@
 
 (*Free to use by all means*)
 
+alphasets.4th - sets of strings
+
 bigintegers.4th - Stackbased unsigned big operations
 
 calendar.4th - Modified Julian calendar
@@ -20,3 +22,4 @@ simplestring.4th - Storing and concatenating strings
 
 stringstack.4th - Stack and stackoperations for strings
 
+tautologies.4th - Testing tautologies
