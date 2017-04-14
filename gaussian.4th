@@ -1,5 +1,10 @@
 \ Gaussian integers
 \ Typical restriction, the norm must be a single cell integer
+false [if]
+Complex numbers with integer components are represented as two singles on the stack.
+3 -4 g. 3-4i  ok
+There words g+ g- g* g/ gmod ggcd isgprime gfactors
+[then]
 
 s" numbertheory.4th" included
 
@@ -35,6 +40,7 @@ s" numbertheory.4th" included
   then ;
 
 : .gs depth 2 < if exit then 2>r recurse 2r> 2dup g. ;
+\ print the stack of Gaussian numbers
 
 : g+ \ a b c d -- a+c b+d
   under+ under+ ;
