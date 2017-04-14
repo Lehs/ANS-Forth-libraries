@@ -1,6 +1,16 @@
 \ Prime squeezing and counting
+false [if]
+It's possible to store consecutive prime series in tables using only two bytes
+per prime number up to virtually any size (at least 100 decimals or so), with 
+a technique using that the prime gaps for those numbers are less than 65536=2^16.
+What's stored in the main table are the prime numbers modulo 65536, and in a 
+minor table "break points" are stored: the number n when the next prime Pn+1 
+divided with 65536 is greater than the same for the previous prime. 
+A fast search in the minor table gives the index number, that multiplied with 65536 
+should be added to the number in the main table to get the prime.
 
-\ http://forthmath.blogspot.in/2015/12/prime-tables-and-prime-counting-function.html
+See also http://forthmath.blogspot.in/2015/12/prime-tables-and-prime-counting-function.html
+[then]
 
 s" numbertheory.4th" included
 
@@ -171,4 +181,3 @@ wordexist pi [if] : fpi pi ; [then]
   begin r@ newintpnr 2dup - 2 u< \ i j flag
   until r> drop nip ;
 \ number of primes less than or equal than x 
-
