@@ -1,5 +1,13 @@
 \ String stack
+false [if]
+s Hello world!"
+s This is String Stack"
+sswap str. space str.
 
+sdrop sdup sswap sover srot spick snip stuck 
+s& \ s1 s2 -- s1&s2
+sempty \ -- flag
+[then]
 : clearbuf \ ad --
   dup cell+ swap ! ;
 
