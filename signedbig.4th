@@ -1,5 +1,9 @@
 \ Signed big integers
 \ Absolute values on b-stack and "negative flags" on data stack
+false [if]
+sb -80173583758375837581735317510835 cr sb.
+-80173583758375837581735317510835  ok
+[then]
 
 s" bigintegers.4th" included
 
