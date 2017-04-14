@@ -1,4 +1,6 @@
-\ Prime counting via the sieve of Eratosthenes
+\ Prime squeezing and counting
+
+\ http://forthmath.blogspot.in/2015/12/prime-tables-and-prime-counting-function.html
 
 s" numbertheory.4th" included
 
