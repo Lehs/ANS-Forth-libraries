@@ -39,9 +39,12 @@ More information on https://forthmath.blogspot.se
 
 \ {(104,101,106),(100,117),(103,108,97,100,101)}
 : z>s \ seq -- str
-  snull s{& foreach
-  do set>str s& s,& 
-  loop str> 1- >str s}& ;
+  snull s{& zst@
+  if foreach
+     do set>str s& s,& 
+     loop str> 1- >str
+  else zdrop 
+  then s}& ;
 
 : revseqset \ s -- s'
   zdup cardinality
