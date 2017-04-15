@@ -849,7 +849,7 @@ variable foo
   bover bover b* brot brot bgcd b/ ;
 
 \ the square-and-multiply-algorithm
-: b**mod~ \ u v m -- u^v mod m
+: b**mod \ u v m -- u^v mod m
   >bx blog~ bswap >bx bone 0        \ v 1 | x: m u | l[v] 0
   do i bits/mod cells second + @    \ v w | x: m u | r celli
      1 rot lshift and        \ v w | x: m u | celli & 2^r
@@ -858,7 +858,7 @@ variable foo
   loop bnip xdrop xdrop ;
 
 \ the square-and-multiply-algorithm with Barrett reduction ?
-: b**mod \ u v m -- u^v mod m
+: b**mod~ \ u v m -- u^v mod m
   bover bone b= if bnip bmod exit then
   >bar blog~ bswap >bx bone 0
   do i bits/mod cells second + @
@@ -916,11 +916,11 @@ variable flag22
   first @ = bdrop ;
 
 : pseudo1 \ xsi s m -- | -- f
-  b**mod 1 digit= ;
+  b**mod~ 1 digit= ;
 
 : pseudo2 \ xsi s m -- | r -- f
   >bx bx b1- >bx false >ys 0
-  do bover bover i blshift by b**mod
+  do bover bover i blshift by b**mod~
      bx b=
      if true ys! leave then
   loop xdrop xdrop bdrop bdrop ys> ;
