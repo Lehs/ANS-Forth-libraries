@@ -30,8 +30,8 @@ base !
 : tautology? if ." is " else ." isn't " then ." a tautology" ;
 
 \ examples:
-\ p q v p -> istautology
-\ p q -> q r -> & r -> istautology 
-\ p q & p -> istautology
-\ p q & r -> p q r -> -> <-> istautology
+\ p q v p -> tautology?
+\ p q -> q r -> & r -> tautology?
+\ p q & p -> tautology?
+\ p q & r -> p q r -> -> <-> tautology?
 \ ((p&q)->r)<->(p->(q->r))
