@@ -1,5 +1,5 @@
 **Minimalist libraries, extensions to ANS Forth**
-
+(*Open code*)
 (*Free to use by all means*)
 
 alphasets.4th - sets of strings
