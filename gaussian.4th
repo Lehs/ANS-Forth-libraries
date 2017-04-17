@@ -4,6 +4,9 @@ false [if]
 Complex numbers with integer components are represented as two singles on the stack.
 3 -4 g. 3-4i  ok
 There words g+ g- g* g/ gmod ggcd isgprime gfactors
+More information on
+https://forthmath.blogspot.se
+https://github.com/Lehs/ANS-Forth-libraries
 [then]
 
 s" numbertheory.4th" included
