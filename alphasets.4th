@@ -19,7 +19,9 @@ ssubset \ s1 s2 -- flag
 sequal \ s1 s2 -- flag
 scard \ set -- n
 
-More information on https://forthmath.blogspot.se
+More information on 
+https://forthmath.blogspot.se
+https://github.com/Lehs/ANS-Forth-libraries
 [then]
 
 \ Create string of set or ordered sequence
