@@ -1,13 +1,8 @@
 \ Basic number theoretic package, extension to ANS Forth
 \
-\ SP-Forth require
-\ S" lib/ext/caseins.f" INCLUDED
-\ S" ~af/lib/locals-ans.f" INCLUDED
-\ S" lib/include/double.f" INCLUDED
-\ S" lib/include/float2.f" INCLUDED
-\ CASE-INS ON
-\
-\ s" basicsinglext.4th" included
+\ For more information see:
+\ https://forthmath.blogspot.se
+\ https://github.com/Lehs/ANS-Forth-libraries
 \ Unsigned integer number theory basicsinglext.4th 
 \
 \ isprime \ u -- flag
