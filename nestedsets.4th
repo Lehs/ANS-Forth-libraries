@@ -89,7 +89,9 @@ as for example ISPRIME
 { 1 20 | isprime } zet.
 {2,3,5,7,11,13,17,19} ok
 
-For more i formation, see https://forthmath.blogspot.se
+For more i formation:
+https://forthmath.blogspot.se
+https://github.com/Lehs/ANS-Forth-libraries
 [then]
 
 : log~ \ n -- #binary digits
