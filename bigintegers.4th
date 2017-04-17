@@ -26,7 +26,9 @@ bnextprime \ b -- p
 b. print the top of the stack
 .b print the whole stack
 
-More information on https://forthmath.blogspot.se
+More information on 
+https://forthmath.blogspot.se
+https://github.com/Lehs/ANS-Forth-libraries
 [then]
 
 s" numbertheory.4th" included
@@ -857,7 +859,7 @@ variable foo
      then bx bx> b* bx bmod >bx     \ v [w*u] x<-[x*x]
   loop bnip xdrop xdrop ;
 
-\ the square-and-multiply-algorithm with Barrett reduction ?
+\ the square-and-multiply-algorithm with Barrett reduction
 : b**mod~ \ u v m -- u^v mod m
   bover bone b= if bnip bmod exit then
   >bar blog~ bswap >bx bone 0
