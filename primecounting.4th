@@ -24,7 +24,7 @@ s" numbertheory.4th" included
   while 2 -
   repeat ;
 
-wordexist under+ 0=
+[defined]  under+ 0=
 [if]
 : under+ \ a b c -- a+c b 
   rot + swap ;
@@ -174,7 +174,7 @@ breaknumbers cells allocate throw constant breaks
   >r 2dup + 2/ dup pnr@ r> u> \ i j k flag
   if -rot nip else nip then ;
 
-wordexist pi [if] : fpi pi ; [then]
+[defined] pi [if] : fpi pi ; [then]
 
 : pi \ x -- n 
   >r pi_plim 1+ 0  \ x < plim
