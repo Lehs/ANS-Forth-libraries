@@ -112,8 +112,8 @@ plim bitarray prime_ constant pbuf
 plim prevprime constant pmax_
 
 : nextprime_ \ numb -- prime   numb<pmax_
-  dup 3 u< if drop 2 exit then
-  1 or
+  dup 2 u< if drop 2 exit then
+  1+ 1 or
   begin dup prime_ 0=
   while 2 +
   repeat ;
