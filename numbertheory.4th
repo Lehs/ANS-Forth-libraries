@@ -144,9 +144,10 @@ create pnr
 [then]
 
 : nextprime \ u -- p
-  1+
+  dup 2 < if drop 2 exit 
+  then 1+ 1 or
   begin dup isprime 0=
-  while 1+
+  while 2 +
   repeat ;
 
 : func \ numb n -- m 
