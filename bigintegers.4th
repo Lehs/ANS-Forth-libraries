@@ -944,7 +944,8 @@ variable flag22
   then ;
 
 : bnextprime \ b -- p
-  b1or
+  bone br= if bdrop b1+ exit then bdrop
+  b1+ b1or
   begin bdup bisprime 0=
   while b2+
   repeat ; 
