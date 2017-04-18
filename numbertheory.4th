@@ -6,7 +6,7 @@
 \ Unsigned integer number theory basicsinglext.4th 
 \
 \ isprime \ u -- flag
-\ nextprime \ u -- p
+\ nextprime \ u -- p   p is the smallest prime > u
 \ primefactors \ u -- q1 q2 ... qn n
 \ radical \ n -- r
 \ totients \ n -- t
@@ -144,6 +144,7 @@ create pnr
 [then]
 
 : nextprime \ u -- p
+  1+
   begin dup isprime 0=
   while 1+
   repeat ;
