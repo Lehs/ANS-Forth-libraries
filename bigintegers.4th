@@ -33,8 +33,6 @@ https://github.com/Lehs/ANS-Forth-libraries
 
 s" numbertheory.4th" included
 
-: wordexist bl word find nip ;
-
 base @ hex
 
 \ miscellanous
@@ -42,12 +40,12 @@ base @ hex
 : 0! 0 swap ! ;
 : 1+! 1 swap +! ;
 : u2/ 1 rshift ;
-wordexist u/ 0= [if] : u/ 0 swap um/mod nip ; [then]
-wordexist umod 0= [if] : umod 0 swap um/mod drop ; [then]
-wordexist cell- 0= [if] : cell- cell - ; [then]
-wordexist .r 0= [if] : .r >r 0 <# #S #> r> over - spaces type ; [then]
-wordexist s>f 0= [if] : s>f s>d d>f ; [then]
-wordexist f>s 0= [if] : f>s f>d d>s ; [then]
+[defined] u/ 0= [if] : u/ 0 swap um/mod nip ; [then]
+[defined] umod 0= [if] : umod 0 swap um/mod drop ; [then]
+[defined] cell- 0= [if] : cell- cell - ; [then]
+[defined] .r 0= [if] : .r >r 0 <# #S #> r> over - spaces type ; [then]
+[defined] s>f 0= [if] : s>f s>d d>f ; [then]
+[defined] f>s 0= [if] : f>s f>d d>s ; [then]
 
 : d256*  \ ud -- 256ud
   over 8 lshift rot 0FF000000 and 018 rshift
