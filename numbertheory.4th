@@ -31,7 +31,7 @@
 \ u*mod \ u1 u2 u3 -- u1*u2(mod u3)
 \ u**mod \ b a m -- b^a(mod m)
 
-: wordexist bl word find nip ;
+: [defined]  bl word find nip 0<> ; immediate
 
 cell 8 * constant bits
 
@@ -210,7 +210,7 @@ create pnr
   dup 1 = if 0= exit then
   pollard# sort ;
 
-wordexist sp!
+[defined] sp!
 [if]
 sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
 : drops \ a1 ... an n --
