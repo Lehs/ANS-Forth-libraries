@@ -144,4 +144,8 @@ s" numbertheory.4th" included
   if 2drop exit
   then 2dup 2>r g/ recurse 2r> recurse ;
 \ For unknown reason gfactors doesn't work for GForth 0.7.0 32 bit Windows
-\ It works for GForth Android, Gforth 64 bit Windows and SP-Forth+ Windows
+\ It works for 
+\ GForth Android, 
+\ Gforth 64 bit Windows 
+\ SP-Forth+ Windows
+\ Win32Forth 6.15.03
