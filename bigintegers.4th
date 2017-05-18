@@ -1,37 +1,10 @@
 \ unsigned natural numbers of dynamical length in 32+ bit ANS Forth
-\ forthmath.blogspot.se
-false [if]
-Big number operations use big number stacks:
-
-b 12345678901234567890123456789012345678901234567890 ok
-
-and the operations are similar to the ordinary arithmetic in Forth:
-
-b+ b- b* b/ b/mod bmod b= b< b0= b0< blshift brshift band bor bxor etc.
-
-There are also words
-
-b*mod \ b1 b2 b3 -- b1*b2(mod b3)
-b** \ b1 b2 -- b1^b2
-b**mod \ b1 b2 b3 -- b1^b2(mod b3)
-binvmod \ b1 b2 -- b3
-bfactorial \ b -- b!
-blegendre \ b p -- i
-bgcd \ b1 b2 -- gcd
-bsqrtf \ b -- b'
-bsqrtc \ b -- b'
-bisprime \ b -- flag
-bnextprime \ b -- p
-
-b. print the top of the stack
-.b print the whole stack
-
-More information on 
-https://forthmath.blogspot.se
-https://github.com/Lehs/ANS-Forth-libraries
-[then]
+\ https://forthmath.blogspot.se
+\ 
 
 s" numbertheory.4th" included
+
+: [defined]  bl word find nip 0<> ;
 
 base @ hex
 
@@ -43,6 +16,7 @@ base @ hex
 [defined] u/ 0= [if] : u/ 0 swap um/mod nip ; [then]
 [defined] umod 0= [if] : umod 0 swap um/mod drop ; [then]
 [defined] cell- 0= [if] : cell- cell - ; [then]
+[defined] rdrop 0= [if] : rdrop r> drop ; [then]
 [defined] .r 0= [if] : .r >r 0 <# #S #> r> over - spaces type ; [then]
 [defined] s>f 0= [if] : s>f s>d d>f ; [then]
 [defined] f>s 0= [if] : f>s f>d d>s ; [then]
@@ -252,8 +226,6 @@ variable xp
 \ extra pad
 02000 dup allocate throw constant pad1
 pad1 + cell - constant pad2
-
-0400 allocate throw constant pad3
 
 : rez \ a n -- a' n'  delete leading zero ascii 48
   dup 1 =
@@ -523,9 +495,9 @@ vst!   \ initialize stack för dynamical numbers
   do i nth 0= if i leave then loop ;
 
 : v>b  \ convert asc-number to digital bignumber
-  pad1 1k 2dup + pad1
+  pad 1k 2dup + pad
   do v>byte i c!
-     if drop i 1+ 0! i pad1 - 1+ cell+ leave then
+     if drop i 1+ 0! i pad - 1+ cell+ leave then
   loop bdrop bpush <top ;
 
 : s>b \ -- v | n --  convert single to big
@@ -763,6 +735,11 @@ variable borrow
 : brandom \ -- u | n --  the maximal number of decimal digits in u
   bzero 0 do bten b* 10 random s>b b+ loop ;
 
+: brand# \ -- u | n -- 
+  9 random 1+ s>b 1 
+  do bten b* 10 random s>b b+ loop ;
+\ n is the number of decimal digits in u
+
 \ 2^sxn+1=2*2^sxn-[2^sxn]^2*n/2^[2s]
 \ q=t*x/2^[2n]
 : b/ \ u v -- q   Newton-Ralphson on y=2^s/x-A
@@ -806,7 +783,7 @@ variable foo
   if bdrop else b- then ;
 
 : >bar \ u --      u is the denominator; precalc for barmod
-  blog~ 2* dup foo !       \ foo = 2*bitlen
+  blog~ 2* dup foo !               \ foo = 2*bitlen
   bone blshift bover b/ bar b!     \ bar = 2^foo/u
   den b! ;        \ den = u
 
@@ -858,7 +835,7 @@ variable foo
   loop bnip xdrop xdrop ;
 
 \ the square-and-multiply-algorithm with Barrett reduction
-: b**mod~ \ u v m -- u^v mod m
+: bar**mod \ u v m -- u^v mod m
   bover bone b= if bnip bmod exit then
   >bar blog~ bswap >bx bone 0
   do i bits/mod cells second + @
@@ -900,6 +877,7 @@ variable flag22
   ?do dup i - bs*
      i 1+ bs/mod drop
   loop drop ;
+\ choose k of n
 
 \ rabin-miller strong pseudoprime test
 
@@ -916,11 +894,11 @@ variable flag22
   first @ = bdrop ;
 
 : pseudo1 \ xsi s m -- | -- f
-  b**mod~ 1 digit= ;
+  bar**mod 1 digit= ;
 
 : pseudo2 \ xsi s m -- | r -- f
   >bx bx b1- >bx false >ys 0
-  do bover bover i blshift by b**mod~
+  do bover bover i blshift by bar**mod
      bx b=
      if true ys! leave then
   loop xdrop xdrop bdrop bdrop ys> ;
@@ -949,5 +927,11 @@ variable flag22
   begin bdup bisprime 0=
   while b2+
   repeat ; 
+
+: blegendre \ b p -- i 
+  bdup                      \ b p p 
+  b1- b2/ bswap b**mod      \ b (p-1)/2 p -- x
+  bdup bone b>              \ x x>1
+  if bdrop -1 else b>s then ; 
 
 base !
