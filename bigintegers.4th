@@ -2,7 +2,8 @@
 \ https://github.com/Lehs/ANS-Forth-libraries
 \ https://forthmath.blogspot.se
 
-s" numbertheory.4th" included
+\ s" numbertheory.4th" included
+s" c:/ans-forth-lib/numbertheory.4th" included
 
 base @ hex
 
@@ -552,11 +553,11 @@ variable borrow
   2dup bits swap - rshift -rot lshift ;
 
 : blshift  \ v -- u | n --     big left shift
-  0 locals| x |
+  0 0 locals| x y |
   bits/mod over 0=
   if nip first dup rot cells dup to x + len1 cmove>
      x bvp @ +! first x erase exit
-  then cells locals| y |            \ i  y=4[n/32]
+  then cells to y                   \ i  y=4[n/32]
   y first dup to x +                \ i f+4[n/32]  x=first
   x over len1 dup >xs cmove>        \ i f+4[n/32]  z=len1
   x y erase
@@ -679,8 +680,8 @@ variable borrow
   b2dup< if bdrop bzero exit then
   len1 cell > 0=
   if b>s bdup bs/mod drop exit then
-  blog~ locals| x | 
-  >bx bdup blog~ 2/ 6 + 2* locals| y |
+  blog~ 0 locals| y x | 
+  >bx bdup blog~ 2/ 6 + 2* to y 
   y x - dup to x bone blshift x
   if 6 bs* 5 bs/mod drop then 01F 0            \ start value
   do bdup b2* bover bdup b* bx b*
