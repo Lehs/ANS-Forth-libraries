@@ -1,12 +1,17 @@
 \ Basic number theoretic package, extension to ANS Forth
 \
-\ For more information see:
-\ https://forthmath.blogspot.se
-\ https://github.com/Lehs/ANS-Forth-libraries
+\ SP-Forth require
+\ S" lib/ext/caseins.f" INCLUDED
+\ S" ~af/lib/locals-ans.f" INCLUDED
+\ S" lib/include/double.f" INCLUDED
+\ S" lib/include/float2.f" INCLUDED
+\ CASE-INS ON
+\
+\ s" numbertheory.4th" included
 \ Unsigned integer number theory basicsinglext.4th 
 \
 \ isprime \ u -- flag
-\ nextprime \ u -- p   p is the smallest prime > u
+\ nextprime \ u -- p   p smallest prime > u
 \ primefactors \ u -- q1 q2 ... qn n
 \ radical \ n -- r
 \ totients \ n -- t
@@ -31,7 +36,9 @@
 \ u*mod \ u1 u2 u3 -- u1*u2(mod u3)
 \ u**mod \ b a m -- b^a(mod m)
 
-: [defined]  bl word find nip 0<> ; immediate
+bl word [defined] find nip 0= [if]
+: [defined] bl word find nip 0<> ;
+[then]
 
 cell 8 * constant bits
 
@@ -55,14 +62,18 @@ cell 8 * constant bits
      then 
   loop lg ;
 
+[defined] umin 0= [if] 
 : umin \ u1 u2 -- u
   2dup u< if drop else nip then ;
-
+[then]
+[defined] umax 0= [if]
 : umax \ u1 u2 -- u
   2dup u< if nip else drop then ;
-
+[then]
+[defined] umod 0= [if]
 : umod \ u q -- u(mod q)
   0 swap um/mod drop ; 
+[then]
 
 : ugcd \ u1 u2 -- u      \ Greatest common divisor
   2dup u< if swap then   \ smallest of a b on top of stack (tos)
@@ -370,3 +381,4 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
   unit unit* to unit \ old_a
   0< if n 1- 2/ -1** else 1 then 
   unit unit* ;
+
