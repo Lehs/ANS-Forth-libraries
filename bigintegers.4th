@@ -2,16 +2,17 @@
 \ https://github.com/Lehs/ANS-Forth-libraries
 \ https://forthmath.blogspot.se
 
-\ s" numbertheory.4th" included
-s" c:/ans-forth-lib/numbertheory.4th" included
+s" numbertheory.4th" included
+
+true value karatsuba \ multiplication
 
 base @ hex
 
 \ miscellanous
 
-: 0! 0 swap ! ;
-: 1+! 1 swap +! ;
-: u2/ 1 rshift ;
+[defined] 0!    0= [if] : 0! 0 swap ! ; [then]
+[defined] 1+!   0= [if] : 1+! 1 swap +! ; [then]
+[defined] u2/   0= [if] : u2/ 1 rshift ; [then]
 [defined] u/    0= [if] : u/ 0 swap um/mod nip ; [then]
 [defined] umod  0= [if] : umod 0 swap um/mod drop ; [then]
 [defined] cell- 0= [if] : cell- cell - ; [then]
@@ -48,7 +49,8 @@ cell log~ 1- constant lcell
   dup 0FF and swap 8 rshift ;
 
 \ extra stack for singel numbers
-create xs here 2k allot dup !
+\ create xs here 2k allot dup !
+08000 allocate throw aligned dup constant xs dup !
 
 : >xs  xs cell over +! @ ! ;
 : xs>  xs dup @ @ -cell rot +! ;
@@ -85,21 +87,21 @@ create xs here 2k allot dup !
 \ array stack in low mem towards high mem
 \ little endian
 
-0A000 constant maxv
+080000 constant maxv
 maxv cell + allocate throw aligned constant v$0
 \ align create v$0 maxv cell+ allot 
 v$0 maxv + constant b0
 variable bvp
 
 \ extra stack
-08000 constant maxx
+080000 constant maxx
 maxx cell + allocate throw aligned constant x$0
 \ align create x$0 maxx cell+ allot 
 x$0 maxx + constant x0
 variable xp
 
 \ extra pad
-02000 dup allocate throw constant pad1
+02000 dup allocate throw aligned constant pad1
 \ align create pad1 02000 dup allot
 pad1 + cell - constant pad2
 
@@ -132,7 +134,7 @@ vst!   \ initialize stack for dynamical numbers
 : vp+ \ -- 
   -cell bvp +! ;    \ stack pointer
 
-: tov \ ad --    ad of number array to stack
+: tov \ ad --    address of number array to stack
   vp+ bvp @ ! ;
 
 : bempty \ -- flag 
@@ -157,18 +159,20 @@ vst!   \ initialize stack for dynamical numbers
 : thi$ \ -- a n 
   third len3 ;
 
-: vdigit \ n --    put single "digit" on stack
+: s>b \ u -- big
   nextfree tuck ! cell+ tov ;
-\ put single integer on bstack
+\ convert unsigned single to big
+
+: d>b \ ud -- big
+  swap nextfree dup >r 2!
+  r> cell+ cell+ tov ;
+\ convert unsigned double to big
 
 : bsconstant \ n --   single as a big constant
-  create , does> @ vdigit ;
+  create , does> @ s>b ;
 
-: dvdigit \ ud --   put double "digit" number on stack
-  swap nextfree dup >r 2! 2 cells r> + tov ;
-
-: bdconstant \ d --
-  create , , does> 2@ dvdigit ;
+: bdconstant \ ud --
+  create , , does> 2@ d>b ;
 
 : vpush \ a n --  put ascii-string on stack
   rez >xs nextfree xs@ over + tov xs> cmove ;
@@ -195,12 +199,6 @@ vst!   \ initialize stack for dynamical numbers
 : bdrops \ bi ... b0 n -- bi .. bn
   cells bvp +! ;
 
-: bmerge \ u v -- w ad
-  first bvp @ @ cell bvp +! bvp @ ! ;
-
-: bsplit \ w ad -- u v
-  bvp @ dup @ -cell bvp +! bvp @ ! ! ;
-
 : bvariable \ n --   the number of bytes to be allocated
   create allocate throw cell , , does> ;
 
@@ -211,7 +209,7 @@ vst!   \ initialize stack for dynamical numbers
 : b! \ big ad --
   bdup! bdrop ;
 
-: b@ \ -- v | ad --
+: b@ \ ad -- big
   2@ bpusha ;
 
 : xstack!  x0 cell - xp ! x$0 xp @ ! ; xstack!  \ xtra stack
@@ -244,6 +242,7 @@ vst!   \ initialize stack for dynamical numbers
   >xs xnext xs@ over + tox xs> cmove ;
   
 : xdrop  cell xp +! ;
+: xdrops cells xp +! ;
 
 : xempty \ -- f 
   xnext x$0 = ;
@@ -283,7 +282,6 @@ vst!   \ initialize stack for dynamical numbers
 : vswap  v>x v>x vy vx> xdrop ; 
 : brot  boover top$ sec$ thi$ 4 bdrops bpusha bpusha bpusha ; \ 4 move
 : btuck  bswap bover ; \ 4 move 
-: b2swap~  brot >bx brot bx> ; \ 10 move
 : b2dup  bover bover ; \ 2 move
 : b2drop  2 bdrops ; \ 0 move
 : b3dup  boover boover boover ; \ 3 move
@@ -292,11 +290,11 @@ vst!   \ initialize stack for dynamical numbers
 
 : reztop  top$ xpush bdrop bx> ;      \ clean leading asczeros
 : vzero  [char] 0 nextfree tuck c! 1+ tov ;
-: bzero 0 vdigit ;                    \ small bigintegers
-: bone  1 vdigit ;
-: btwo  2 vdigit ;
-: bthree 3 vdigit ;
-: bten  0A vdigit ;
+: bzero 0 s>b ;                    \ small bigintegers
+: bone  1 s>b ;
+: btwo  2 s>b ;
+: bthree 3 s>b ;
+: bten  0A s>b ;
 
 : byte1@ \ v -- v | -- b  get least significant byte of tos
   first c@ ;
@@ -305,8 +303,7 @@ vst!   \ initialize stack for dynamical numbers
   second c@ ;
 
 : <vtop  \ delete unwanted leading asc zeros
-  begin len1 2 <
-     if exit then nextfree 1- c@ 0=
+  begin len1 2 <=     if exit then nextfree 1- c@ 0=
   while -1 bvp @ +!
   repeat ;
 
@@ -324,7 +321,7 @@ vst!   \ initialize stack for dynamical numbers
   do i second + @ swap x um/mod i first + ! -cell
   +loop <top bnip ;
 
-: vr< \ u v -- u v | -- f  compare numbers as asc strings
+: vr< \ u v -- u v f    compare numbers as asc strings
   reztop <vtop vswap reztop <vtop vswap
   len2 len1 2dup <
   if 2drop true exit
@@ -372,6 +369,8 @@ vst!   \ initialize stack for dynamical numbers
 : b2over  3 bpick 3 bpick ; \ 2 move
 : b2swap  b2over top$ sec$ thi$ 3 nth 3 len# 6 bdrops bpusha bpusha bpusha bpusha ; \ 6 move
 
+\ : b2rot \ a b c d e f -- c d e f a b
+
 : xnth \ n -- b/0 
   1+ xp @ swap cells +
   dup x0 = if drop 0 else @ then ;
@@ -399,21 +398,19 @@ vst!   \ initialize stack for dynamical numbers
      if drop i 1+ 0! i pad - 1+ cell+ leave then
   loop bdrop bpush <top ;
 
-: s>b \ -- v | n --  convert single to big
-  0 <# #s #> vpush v>b ;
+\ : s>b~  0 <# #s #> vpush v>b ;
 
-: b>s  \ u -- | -- n  conv big to single
+: b>s  \ big -- u  conv big to single
   first @ bdrop ;
 
-: d>b \ -- v | d --
-  <# #s #> vpush v>b ;
+\ : d>b~  <# #s #> vpush v>b ;
 
-: b>d  \ u -- | -- d
+: b>d  \ big -- ud
   top$ 5 < if @ 0 else 2@ swap then bdrop ;
 
 : v  bl parse vpush ;     \ 'v 12345' put asc numb on tos
-: b  v v>b ;             \ put bigint on tos
-: cl vst! xstack! ;    \ clear stacks
+: b  v v>b ;              \ put bigint on tos
+: cl vst! xstack! ;       \ clear stacks
 
 : .v  cr bdepth ?dup    \ print asc numb stack
   if 0 do i nth i len# type cr loop then ;
@@ -524,7 +521,7 @@ variable borrow
      i x + @ 0 d-
      abs borrow ! i y + ! cell
   +loop bdrop <top ;
-  
+
 : br~ \ u v -- |u-v| v flag
   b2dup< if bswap true else false then 
   first len1 + len2 len1 - dup bvp @ +! erase
@@ -572,8 +569,14 @@ variable borrow
   loop nextfree y - y erase
   <top ;
 
+: bor \ b1 b2 -- b1Vb2    len2>=len1
+  len2 len1 - nextfree over bvp @ +! swap erase
+  len2 0
+  do i second + @ i first + dup >r @ or r> ! 
+  loop bnip ;
+
 : bdup1and \ v -- v i
-  first @ 1 and vdigit ;
+  first @ 1 and s>b ;
 
 : bdupeven \ v -- v flag
   first @ 1 and 0= ;
@@ -644,6 +647,12 @@ variable borrow
   do dup i @ um* k 0 d+ to k last!> cell 
   +loop k nextfree cell - ! drop <top ;
 
+: bs@* \ single ad n -- big
+  0 locals| k | 
+  bzero over + swap
+  do dup i @ um* k 0 d+ to k last!> cell 
+  +loop k nextfree cell - ! drop <top ;
+
 : bs* \ v n -- n*v 
   >bx cell*x xdrop ;
 
@@ -653,9 +662,10 @@ variable borrow
   do dup i @ um* k 0 d+ to k last!> cell +loop
   k nextfree cell - ! drop <top ;
 
-: bitsblshift \ v -- w         big shift left with number of bits
-  top$ over cell+ swap cmove>
+: bitsblshift \ v -- w 
+  top$ over cell+ swap move
   cell bvp @ +! 0 first ! ;
+\ big shift left with number of bits (32 or 64)
 
 : b* \ u v -- u*v
   len1 len2 < if bswap then
@@ -663,18 +673,74 @@ variable borrow
   do bitsblshift i @ cell*x b+ -cell +loop
   bnip xdrop <top ;
 
-: brandom \ n -- u     n is the maximal number of decimal digits in u
+: b@* \ ad1 n1 ad2 n2 -- big
+  bzero dup 3 pick < if 2swap then
+  over + cell -
+  do bitsblshift 2dup i @ -rot bs@* b+ -cell 
+  +loop 2drop <top ;
+\ multiply two big numbers at addresses and put result on big stack
+
+: bcells. \ b -- 
+  base @ hex
+  top$ over + swap
+  do i @ 0 <# # # # # # # # # #> type space cell 
+  +loop bdrop base ! ;
+
+: .cells \ --
+  bdepth 0
+  ?do i bpick cr bcells. loop ;
+
+: bcells* \ big m -- big*C^m
+  cells top$ locals| n ad mb |
+  ad ad mb + n move
+  ad mb erase
+  mb bvp @ +! ;
+
+: bcells/ \ big m -- big/C^m
+  cells top$ locals| n ad mb |
+  ad mb + ad n move
+  mb negate bvp @ +! ;
+
+: bmerge \ u v -- w 
+  bvp @ @ cell bvp +! bvp @ ! ;
+
+: bsplit \ w ad -- u v 
+  dup nextfree < 
+  if bvp @ dup @ vp+ bvp @ ! ! 
+  else drop bzero
+  then ;
+
+: btransmul \ x y -- x0 x1 y0 y1 m     B=2^bits 
+  len1 len2 max cell + lcell 1+ rshift     \ m
+  dup >r cells 
+  >bx first over + bsplit 
+  bx> first + bsplit r> ; 
+\ x=x0+x1*B^m  y=y0+y1*B^m 
+
+084 value karalim
+karatsuba [if]
+: b* \ x y -- xy
+  len1 len2 max karalim < 
+  if b* exit then
+  btransmul >r                   \ x0 x1 y0 y1
+  3 bpick 2 bpick recurse >bx    \ bx: x0*y0
+  2 bpick 1 bpick recurse >bx    \ bx: x0*y0 x1*y1
+  b+ >bx b+ bx>   recurse        \ (x0+x1)(y0+y1)
+  bx b- by b- r@ bcells*         \ z1*C^m
+  bx> r> 2* bcells* bx> b+ b+ <top ;
+\ Karatsuba multiplication
+[then]
+
+: brandom \ n -- u     n is the maximal number of decimal digits in 
   bzero 0 do bten b* 10 random s>b b+ loop ;
 
 : brand# \ n -- u      n is the exact number of decimal digits in u
   9 random 1+ s>b 1 
-  do bten b* 10 random s>b b+ loop ;
+  ?do bten b* 10 random s>b b+ loop ;
 
-0 [if]
 \ 2^sxn+1=2*2^sxn-[2^sxn]^2*n/2^[2s]
 \ q=t*x/2^[2n]
 \ Newton-Ralphson on y=2^s/x-A
-[then]
 
 : boverswap/ \ u v -- u u/v
   b2dup< if bdrop bzero exit then
@@ -718,7 +784,7 @@ variable foo
   bone blshift bover b/ bar b!     \ bar = 2^foo/u
   den b! ; 
 
-: boverswap** \ a b -- a^b
+: boverswap** \ a b -- a a^b
   first @ 0= if 2 bdrops bone exit then
   >bx bzero >bx bone
   begin bover b*
