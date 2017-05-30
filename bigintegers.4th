@@ -4,7 +4,7 @@
 
 s" numbertheory.4th" included
 
-true value karatsuba \ multiplication
+false value karatsuba \ multiplication 
 
 base @ hex
 
@@ -44,6 +44,7 @@ cell log~ 1- constant lcell
 
 : bits/mod \ n -- r q
   dup bits-1 and swap lbits rshift ;
+\ /mod with number of bits/cell as nominator
 
 : 256/mod \ n -- r q
   dup 0FF and swap 8 rshift ;
@@ -546,28 +547,38 @@ variable borrow
 : |br-| \ u v -- |u-v| v
   br~ drop ;
 
-: bsl \ n i -- n1 n0        big shift left, n < 2^bits
-  2dup bits swap - rshift -rot lshift ;
+: bcells* \ big m -- big*C^m
+  cells top$ locals| n ad mb |
+  ad ad mb + n move
+  ad mb erase
+  mb bvp @ +! ;
 
-: blshift  \ v -- u | n --     big left shift
-  0 0 locals| x y |
-  bits/mod over 0=
-  if nip first dup rot cells dup to x + len1 cmove>
-     x bvp @ +! first x erase exit
-  then cells to y                   \ i  y=4[n/32]
-  y first dup to x +                \ i f+4[n/32]  x=first
-  x over len1 dup >xs cmove>        \ i f+4[n/32]  z=len1
-  x y erase
-  xs> over + dup to x swap 0 >xs    \ i f+4[n/32]+len1 f+4[n/32]
-  ?do i @ over bsl xs> or i ! >xs cell +loop
-  xs@ x ! x cell+ bvp @ ! drop xs> drop <top ;
+: bcells/ \ big m -- big/C^m
+  cells top$ locals| n ad mb |
+  ad mb + ad n move
+  mb negate bvp @ +! ;
 
-: brshift \ v n -- u
-  8/mod locals| y x |
-  nextfree 0! nextfree first
-  do y i + @ 0FFFF and x rshift 0FF and i c!
-  loop nextfree y - y erase
-  <top ;
+: bsl \ n i -- n1 n0        big shift left, n < bits
+  2dup bits swap - rshift
+  -rot lshift ;
+
+: bsr \ n i -- n1 n0
+  2dup rshift -rot
+  bits swap - lshift ;
+
+: brshift \ big n -- big'
+  bits/mod locals| a b |
+  a bcells/ 0 to a
+  first nextfree cell -
+  do i @ b bsr swap
+     a or i ! to a -cell
+  +loop <top ;
+  
+: blshift \ big n -- big'
+  bits/mod swap 0 locals| a b |
+  nextfree first
+  do i @ b bsl a or i ! to a cell
+  +loop bcells* <top ;
 
 : bor \ b1 b2 -- b1Vb2    len2>=len1
   len2 len1 - nextfree over bvp @ +! swap erase
@@ -662,10 +673,13 @@ variable borrow
   do dup i @ um* k 0 d+ to k last!> cell +loop
   k nextfree cell - ! drop <top ;
 
-: bitsblshift \ v -- w 
+: bitsblshift~ \ v -- w 
   top$ over cell+ swap move
   cell bvp @ +! 0 first ! ;
 \ big shift left with number of bits (32 or 64)
+
+: bitsblshift \ v -- w 
+  1 bcells* ;
 
 : b* \ u v -- u*v
   len1 len2 < if bswap then
@@ -678,7 +692,6 @@ variable borrow
   over + cell -
   do bitsblshift 2dup i @ -rot bs@* b+ -cell 
   +loop 2drop <top ;
-\ multiply two big numbers at addresses and put result on big stack
 
 : bcells. \ b -- 
   base @ hex
@@ -689,17 +702,6 @@ variable borrow
 : .cells \ --
   bdepth 0
   ?do i bpick cr bcells. loop ;
-
-: bcells* \ big m -- big*C^m
-  cells top$ locals| n ad mb |
-  ad ad mb + n move
-  ad mb erase
-  mb bvp @ +! ;
-
-: bcells/ \ big m -- big/C^m
-  cells top$ locals| n ad mb |
-  ad mb + ad n move
-  mb negate bvp @ +! ;
 
 : bmerge \ u v -- w 
   bvp @ @ cell bvp +! bvp @ ! ;
@@ -718,6 +720,20 @@ variable borrow
 \ x=x0+x1*B^m  y=y0+y1*B^m 
 
 084 value karalim
+
+false [if]
+: b@* \ ad1 n1 ad2 n2 -- big
+  dup 3 pick max karalim < 
+  if b@* exit then
+  btransmul >r                   \ x0 x1 y0 y1
+  3 bpick 2 bpick recurse >bx    \ bx: x0*y0
+  2 bpick 1 bpick recurse >bx    \ bx: x0*y0 x1*y1
+  b+ >bx b+ bx>   recurse        \ (x0+x1)(y0+y1)
+  bx b- by b- r@ bcells*         \ z1*C^m
+  bx> r> 2* bcells* bx> b+ b+ <top ;
+\ Karatsuba multiplication .115171 .124531
+[then]
+
 karatsuba [if]
 : b* \ x y -- xy
   len1 len2 max karalim < 
