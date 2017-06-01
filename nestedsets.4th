@@ -94,13 +94,18 @@ https://forthmath.blogspot.se
 https://github.com/Lehs/ANS-Forth-libraries
 [then]
 
+[defined] log~ 0= [if] 
 : log~ \ n -- #binary digits
   0 swap begin swap 1+ swap 1 rshift ?dup 0= until ;
+[then]
 
+[defined] -cell 0= [if] 
 : -cell cell negate ;
+[then]
 
 \ Sorting the stack
 
+[defined] lower 0= [if] 
 : lower \ m1 ... mn m n+1 -- m1 ... m ... mi n+1
 \ lower m on stack until next number not is greater
   dup 2 =
@@ -122,6 +127,7 @@ https://github.com/Lehs/ANS-Forth-libraries
   then dup >r
   1- recurse roll
   r> lower ;
+[then]
 
 \ Stacks_____
 
@@ -567,11 +573,13 @@ cell 1- log~ constant cellshift
   zst> drop multincl
   zetmerge ;
 
+[defined] choose 0= [if] 
 \ from rosetta code
 : choose \ n k -- nCk
   1 swap 0
   ?do over i - i 1+ */
   loop nip ;
+[then]
 
 \ {s1,...,sn} -- s1U...Usn
 : multiunion \ -- | s -- s'
