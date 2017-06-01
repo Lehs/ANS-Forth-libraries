@@ -11,8 +11,9 @@ should be added to the number in the main table to get the prime.
 
 See also http://forthmath.blogspot.in/2015/12/prime-tables-and-prime-counting-function.html
 [then]
-
+[defined] isprime 0= [if]
 s" numbertheory.4th" included
+[then]
 
 : 8/mod \ n -- r q
   dup 7 and swap 3 rshift ;
