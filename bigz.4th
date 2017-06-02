@@ -36,7 +36,7 @@ s" nestedsets.4th" included
      bgcd 
      b2dup= if bdrop 0= exit then
      bone b2dup= bdrop 0=
-  until bnip ;
+  until bnip ; 
 
 : bpollard2 \ w -- v
   bdup bisprime if exit then
