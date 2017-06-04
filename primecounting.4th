@@ -181,4 +181,4 @@ breaknumbers cells allocate throw constant breaks
   >r pi_plim 1+ 0  \ x < plim
   begin r@ newintpnr 2dup - 2 u< \ i j flag
   until r> drop nip ;
-\ number of primes less than or equal than x 
+\ number of primes less than or equal than x  
