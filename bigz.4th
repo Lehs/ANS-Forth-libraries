@@ -63,7 +63,7 @@ s" nestedsets.4th" included
 s0 constant sp0
 r0 constant rp0
 [then]
-
+.( ok)
 : new-data-stack \ u -- 
   dup aligned allocate throw + dup sp0 ! sp! ; 
 
