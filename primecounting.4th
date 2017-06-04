@@ -19,8 +19,8 @@ s" numbertheory.4th" included
   dup 7 and swap 3 rshift ;
 
 : prevprime \ numb -- prime 
-  dup 3 u< if drop 2 exit then
-  1- 1 or
+  dup 4 u< if drop 2 exit then
+  2 - 1 or
   begin dup isprime 0=
   while 2 -
   repeat ;
@@ -120,8 +120,8 @@ plim prevprime constant pmax_
   repeat ;
 
 : prevprime_ \ numb -- prime 
-  dup 3 u< if drop 2 exit then
-  1- 1 or
+  dup 4 u< if drop 2 exit then
+  2 - 1 or
   begin dup prime_ 0=
   while 2 -
   repeat ;
@@ -155,7 +155,7 @@ breaknumbers cells allocate throw constant breaks
      65536/mod pad @ = 0= \ p r flag
      if 1 pad +! \ p r
         i 1- pad @ cells breaks + ! \ p r
-     then pnrbuf i 1- 2* + 2 mb! 1+ \ p+1
+     then pnrbuf i 1- 2* + 2 mb!    \ p+1
   loop drop ; init_pnr
 \ it takes less than a second to store all primes less than 2^24
 
