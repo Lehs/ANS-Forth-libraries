@@ -148,6 +148,8 @@ create pnr
   3825123056546413051 u< if 11 else 12 then ;
 
 : isprime \ numb -- flag 
+  dup 5 u< if 2 4 within exit then
+  dup 1 and 0= if 0= exit then
   dup rmx 0
   do dup i pnr + c@ rabin-miller2 0=
      if 0= leave then
