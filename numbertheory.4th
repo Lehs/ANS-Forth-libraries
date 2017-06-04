@@ -381,4 +381,3 @@ sp@ sp@ - 0< [if] ' - [else] ' + [then] constant op
   unit unit* to unit \ old_a
   0< if n 1- 2/ -1** else 1 then 
   unit unit* ;
-
