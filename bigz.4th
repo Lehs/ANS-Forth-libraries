@@ -1,10 +1,45 @@
-\ BigZ 
-\ A combination of bigsets and nestedsets
-\ With primecounting tables
+\ bigZ
 
 s" bigintegers.4th" included
 s" primecounting.4th" included
 s" nestedsets.4th" included
+
+\ cond ( n -- flag )
+: sqr dup sqrtf dup * = ;
+: sqrfree dup radical = ;
+: twinprime dup isprime over 2 + isprime rot 2 - isprime or and ;  
+: singleprime dup isprime swap twinprime 0= and ;
+: semiprime bigomega 2 = ;
+: primepower smallomega 1 = ;
+: biprime smallomega 2 = ;
+
+\ cond ( m n -- flag )
+: coprime ugcd 1 = ;
+: divide swap mod 0= ; 
+
+: xzmerge \ s -- 
+  xst zst setmove
+  zswap zetmerge 
+  zst xst setmove ; 
+  
+: xzmergered \ s --
+  xst zst setmove
+  zswap zetmerge 
+  set-sort reduce
+  zst xst setmove ; 
+
+: factorset \ n -- set
+  primefactors locals| n |
+  n 0 do >zst loop
+  n 2* negate >zst 
+  set-sort 
+  zst> 1- >zst ;
+
+: set-of-factors \ s -- s'
+  0 >xst
+  foreach
+  do zst> factorset zfence xzmerge loop
+  xst zst setmove ;
 
 \ testing for small (fast) single number divisors
 \ of big number w in the intervall n,m-1
@@ -36,7 +71,7 @@ s" nestedsets.4th" included
      bgcd 
      b2dup= if bdrop 0= exit then
      bone b2dup= bdrop 0=
-  until bnip ; 
+  until bnip ;
 
 : bpollard2 \ w -- v
   bdup bisprime if exit then
@@ -63,10 +98,9 @@ s" nestedsets.4th" included
 s0 constant sp0
 r0 constant rp0
 [then]
-.( ok)
+
 : new-data-stack \ u -- 
   dup aligned allocate throw + dup sp0 ! sp! ; 
 
 100000 cells new-data-stack
 100001 cells allocate throw 100000 cells + align rp0 ! q
-
