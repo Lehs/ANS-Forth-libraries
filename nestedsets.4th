@@ -1,111 +1,17 @@
 \ NESTED SETS WITH CARTESIAN PRODUCTS
-false [if]
-Sets may have non negative numbers and sets as elements. 
-The number 0 also denotes the empty set.
-Writing
 
-{ 1 2 3 { 1 2 3 4 } 0 { } } 
-
-give the output
-
-{1,2,3,{1,2,3,4},0}
-
-with the command 
-
-zet. \ set --
-
-To see if two sets are equal
-
-{ 1 2 { 3 } } 
-{ 1 2 { { 3 } } }
-
-use
-
-zet= \ set1 set2 -- flag
-
-To test if an element is a member
-
-member \ element set -- flag
-
-{ 2 3 } { 1 2 3 { 2 4 } { 2 3 } } member
-
-All argument should be on the zst-stack.
-If the element is a number, it must be pushed there
-
-3 >zst { 1 2 3 { 2 4 } { 2 3 } } member
-
-while all sets automatically is put there.
-
-A number on the data stack can be tested by
-
-smember \ n -- flag | set --
-
-3 { 1 2 3 { 2 4 } { 2 3 } } smember 
-
-or
-
-{ 1 2 3 { 2 4 } { 2 3 } } 3 smember
-
-Since the number and the set is transfered to different stacks,
-the order doesn't matter.
-
-Other words are used likewise:
-
-subset \ set1 set2 -- flag
-union \ set1 set2 -- set3
-intersection \ set1 set2 -- set3
-diff \ set1 set2 -- set3
-cardinality \ set -- numb of elements
-powerset \ set -- set of all subsets
-power# \ n -- | set1 -- set2
-
-{ 1 2 3 4 } 2 power#
-
-gives the set of all subsets with 2 elements
-
-{{1,2},{1,3},{1,4},{2,3},{2,4},{3,4}}
-
-Warning! Both powerset and power# my easy cause overflow.
-
-Sets are unordered collections of different elements, so i.e. {2,3,2,2,1}={1,2,3}.
-There are also unordered collections of any elements implemented
-
-( 1 2 ( 3 { 4 5 4 } 6 ) 7 1 ) zet.
-(1,2,(3,{4,5},6),7,1) ok
-
-The cartesian product
-
-cartprod \ set1 set2 -- set3
-
-{ 1 2 3 } { 3 4 } cartprod zet.
-{(3,4),(3,3),(2,4),(2,3),(1,4),(1,3)} ok
-
-Numbers in a set are sorted automatically, 
-but not elements which are sets or sequences.
-
-For defined words TEST \ n -- flag 
-as for example ISPRIME 
-
-{ 1 20 | isprime } zet.
-{2,3,5,7,11,13,17,19} ok
-
-For more i formation:
-https://forthmath.blogspot.se
-https://github.com/Lehs/ANS-Forth-libraries
-[then]
-
-[defined] log~ 0= [if] 
+[defined] log~ 0= [if]
 : log~ \ n -- #binary digits
   0 swap begin swap 1+ swap 1 rshift ?dup 0= until ;
 [then]
 
-[defined] -cell 0= [if] 
+[defined] -cell 0= [if]
 : -cell cell negate ;
 [then]
 
 \ Sorting the stack
 
-[defined] lower 0= [if] 
+[defined] lower 0= [if]
 : lower \ m1 ... mn m n+1 -- m1 ... m ... mi n+1
 \ lower m on stack until next number not is greater
   dup 2 =
@@ -302,6 +208,7 @@ cell 1- log~ constant cellshift
      if 1 else 2 then
   else drop 0
   then ;
+\ 0=numb, 1=vect, 2=set
 
 : _split \ ad --   ad=yst,zst
   dup >r @ cell - @ 0< 0=
@@ -339,11 +246,14 @@ cell 1- log~ constant cellshift
   case 0 of -2 r@ >stack endof
        1 of r@ stack@ 1- r@ >stack endof
        2 of r@ stack@ 2 - r@ >stack endof
-  endcase r> drop ;
+  endcase rdrop ;
 
 : xfence xst _fence ;
 : yfence yst _fence ;
 : zfence zst _fence ;
+
+: zxmove# \ n -- n'
+  zst@ cs 1+ + zst xst setmove ;
 
 : set-sort2 \ -- | s -- n1...nk -2k
   0 locals| counter | 0 >xst 0 >yst
@@ -369,10 +279,10 @@ cell 1- log~ constant cellshift
 : qsort \ ad1 ad2 --      pointing on first and last cell in array
   begin
     2dup < 0= if 2drop exit then
-    2dup - negate 1 rshift >r \ keep radius (half of the distance)
-    2dup singlepart 2dup - >r >r \ ( R: radius distance2 ad )
-    r@ cell - swap r> cell+ swap \ ( d-subarray1 d-subarray2 )
-    2r> u< if 2swap then recurse \ take smallest subarray first
+    2dup - negate 1 rshift >r      \ keep radius (half of the distance)
+    2dup singlepart 2dup - >r >r   \ ( R: radius distance2 ad )
+    r@ cell - swap r> cell+ swap   \ ( d-subarray1 d-subarray2 )
+    2r> u< if 2swap then recurse   \ take smallest subarray first
   again \ tail call optimization by hand
 ;
 
@@ -382,7 +292,7 @@ cell 1- log~ constant cellshift
      swap r@ cell - recurse
      r> cell + swap recurse
   else 2drop
-  then ; \ problem with sorting sorted big set
+  then ; \ problem with almost sorted big set
 
 : set-sort \ -- | s -- n1...nk -2k ???
   xst @ cell+ 0 locals| counter ad1 | 0 >yst
@@ -400,7 +310,7 @@ cell 1- log~ constant cellshift
   dup @ objsize cells - ;
 
 : smember \ n -- flag | s --
-  zst@ cs false locals| flag m |
+  zst@ cs false locals| flag m | 
   foreach
   ?do zst@ 0<
      if m zst@ cs 1+ - to m zdrop
@@ -478,8 +388,8 @@ cell 1- log~ constant cellshift
   endcase ;
 
 :noname \ -- flag | s s' --          \ the subset code
-  zst @ cell - 2@ or 0=
-  if zdrop zdrop true exit then      \ true if both sets are empty
+  zover zst @ @ zdrop 0=
+  if zdrop zdrop true exit then      \ true if s is empty
   zswap zst yst setmove
   begin yst@                         \ set is not empty?
   while ysplit yst@ ?obj
@@ -573,7 +483,7 @@ cell 1- log~ constant cellshift
   zst> drop multincl
   zetmerge ;
 
-[defined] choose 0= [if] 
+[defined] choose 0= [if]
 \ from rosetta code
 : choose \ n k -- nCk
   1 swap 0
@@ -610,12 +520,13 @@ cell 1- log~ constant cellshift
      zst xst setmove
   loop yst setdrop xst zst setmove ;
 
-: functions \ -- | s s' -- s"
+: functions \ s s' -- s"
   secobjad @ 0= if zdrop -2 >zst exit then
   secobjad @ -2 = if cartprod infence exit then
   zswap zsplit zfence zst xst setmove
   zover recurse zswap xst zst setmove
   zswap cartprod infence zetunion ;
+\ s" is the set of all functions s->s'
 
 \ Input of sets_____
 
@@ -651,7 +562,31 @@ true value sort?
 : | \ m n -- x1...xk
   swap ' locals| xt |
   ?do i xt execute if i then loop false to sort? ;
- 
+
+: multicond \ set1 xt -- set2
+  locals| xt | 
+  0 foreach
+  ?do zdup zst> cs 0
+     ?do zst> loop \ zfence
+     xt execute
+     if zxmove# else zdrop then
+  loop 2* negate >xst 
+  xst zst setmove ;
+
+: cleanvector \ s1 -- s2
+  zst@ locals| n | 
+  zst> cs 0
+  do zst> dup 0<
+     if drop n 2 + to n then
+  loop n cs 0
+  do >zst loop n >zst ;
+
+: cleanset \ s1 -- s2
+  0 foreach
+  do cleanvector zxmove# 
+  loop 2* negate >xst
+  xst zst setmove ;
+
 : intcond \ low hi xt -- | -- s   "intervall condition" 
   locals| xt |
   0 -rot swap
@@ -667,7 +602,7 @@ true value sort?
   loop dup 0
   ?do xst> >zst
   loop 2* negate >zst ;
-
+  
 : intimage \ low hi xt -- | -- s  "intervall image"
   locals| xt |
   swap 2dup
@@ -684,7 +619,7 @@ true value sort?
   loop 2* negate >zst
   set-sort reduce ;
 
-: square dup * ;                \ x ? x²
+: square dup * ;
 
 : paircond \ xt -- | s -- s'
   locals| xt | 0
@@ -744,7 +679,6 @@ variable cf2
 : syntax  sp@ zp @ - 0= if 0 0 else 1 then cf2 @ ;
 : non all ;
 
-\ e.g. 1 20 condition < 7 create-set
 : create-set \ m n xt nr -- set
   syntax locals| cf k nr xt n m |
   k cf or
@@ -753,20 +687,26 @@ variable cf2
        2 of m n xt intimage endof
        3 of m n nr xt int2image endof
   endcase ;
+\ 1 20 condition < 7 create-set
 
-\ e.g. condition > 5 filter-set
 : filter-set \ set xt nr -- set'
   syntax locals| cf k nr xt |
   cf 0< if xt paircond exit then k
   case 0 of xt setcond endof
        1 of nr xt set2cond endof
   endcase ;
+\ condition > 5 filter-set
 
-\ e.g. 2dim + transform-set
 : transform-set \ set xt nr -- set'
   syntax locals| cf k nr xt |
   cf 0< if xt pairimage exit then k
   case 0 of xt setimage endof
        1 of nr xt set2image endof
-  endcase ; 
-  
+  endcase ;
+\ e.g. 2dim + transform-set
+
+: reverse_cartesian_set \ s -- s
+  0 foreach
+  do zxmove# loop 
+  2* negate >xst
+  xst zst setmove ;
