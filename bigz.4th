@@ -17,6 +17,11 @@ s" nestedsets.4th" included
 : coprime ugcd 1 = ;
 : divide swap mod 0= ; 
 
+: ~ :noname ;
+: :| postpone locals| ; immediate
+
+\ 1 100 ~ :| x | x isprime x 1- sqr and ; intcond 
+
 : xzmerge \ s -- 
   xst zst setmove
   zswap zetmerge 
@@ -27,7 +32,7 @@ s" nestedsets.4th" included
   zswap zetmerge 
   set-sort reduce
   zst xst setmove ; 
-
+  
 : factorset \ n -- set
   primefactors locals| n |
   n 0 do >zst loop
@@ -92,7 +97,7 @@ s" nestedsets.4th" included
 : bsfactors \ w -- v1 ... vn set
   sfacset bfac ;
 
-\ -------------------------
+\ ------------------------- 
 
 [defined] sp0 0= [if]
 s0 constant sp0
@@ -103,4 +108,4 @@ r0 constant rp0
   dup aligned allocate throw + dup sp0 ! sp! ; 
 
 100000 cells new-data-stack
-100001 cells allocate throw 100000 cells + align rp0 ! q
+100001 cells allocate throw 100000 cells + align rp0 ! q 
