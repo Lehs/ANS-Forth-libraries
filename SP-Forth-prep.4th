@@ -6,6 +6,10 @@ REQUIRE { lib/ext/locals.f
 REQUIRE M*/ lib/include/double.f
 REQUIRE F. lib/include/float2.f
 REQUIRE /STRING lib/include/string.f
+REQUIRE INCLUDED devel/~ygrek/spf/included.f
+
+: <= > 0= ;
+: >= < 0= ;
 
 CASE-INS ON
 
