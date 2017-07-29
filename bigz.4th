@@ -34,6 +34,7 @@ s" nestedsets.4th" included
   zst xst setmove ; 
   
 : factorset \ n -- set
+  dup 1 = if >zst -3 >zst exit then 
   primefactors locals| n |
   n 0 do >zst loop
   n 2* negate >zst 
