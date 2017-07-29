@@ -98,7 +98,7 @@ s" nestedsets.4th" included
 : bsfactors \ w -- v1 ... vn set
   sfacset bfac ;
 
-\ ------------------------- 
+\ -------------------------- 
 
 [defined] sp0 0= [if]
 s0 constant sp0
