@@ -28,18 +28,18 @@
 \ concatenate space to counted string at cad
 
 : unum& \ u cad -- 
-  swap 0 <# #s #> string& ;
+  swap 0 <# #s #> rot string& ;
 \ concatenate unsigned number at counted string at cad
 
 : num& \ n cad -- 
-  swap dup abs 0 <# #s rot sign #> string& ;
+  swap dup abs 0 <# #s rot sign #> rot string& ;
 \ concatenate signed number to counted string at cad
 
 : dnum& \ d cad -- 
-  -rot dup -rot dabs <# #s rot sign #> string& ;
+  -rot dup -rot dabs <# #s rot sign #> rot string& ;
 \ concatenate double signed number to counted string at cad
 
 : udnum& \ ud cad -- 
-  -rot <# #s #> string& ;
+  -rot <# #s #> rot string& ;
 \ concatenate double unsigned number to counted string at cad
 
