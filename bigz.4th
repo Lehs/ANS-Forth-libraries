@@ -158,6 +158,82 @@ r0 constant rp0
 : bsfactors \ w -- v1 ... vn set
   sfacset bfac ;
 
+: isq  sqr ;             \ is perfect square: n -- flag
+: isqf  sqrfree ;        \ is square free: n -- flag
+: isem  bigomega 2 = ;   \ is semi prime: n -- flag
+: ispp  smallomega 1 = ; \ is prime power: n -- flag
+
+: 2sqs  2sqsum ;         \ square sum: a b -- sum
+: 3sqs  3sqsum ;         \ square sum: a b c -- sum
+: 4sqs  4sqsum ;         \ square sum: a b c d -- sum
+
+: div  swap mod 0= ;     \ divides: m n -- flag
+: z. zet. ;
+: cset create-set ;
+: fset filter-set ;
+: bset build-set ;
+: tset transform-set ;
+
+: is-sum-of-two-squares \ n -- flag 
+  dup 3 < if drop true exit then
+  dup isprime if 3 and 3 <> exit then
+  true 0 0 locals| m k flag | 
+  primefactors 0 
+  do flag
+     if dup 3 and 3 =
+        if m over = 
+           if drop k 1+ to k 
+           else to m k odd 1 to k 
+              if false to flag then 
+           then 
+        else drop k odd 0 to k 
+           if false to flag then
+        then 
+     else drop
+     then
+  loop flag k odd 0= and ;
+
+: 2sqrs  is-sum-of-two-squares ;
+
+: is-sum-of-three-squares \ n -- flag
+  oddpart 7 and 7 <> swap odd 0= 0= or ;
+
+: 3sqrs  is-sum-of-three-squares ;
+
+: squaresum# \ n -- m=1,2,3,4
+  dup sqr if drop 1 exit then
+  dup is-sum-of-two-squares if drop 2 exit then
+  is-sum-of-three-squares if 3 exit else 4 then ;
+\ Lagrange's 4 square theorem
+
+: sqs#  squaresum# ;
+: primes  primefactors ;
+: card  cardinality ;
+: \0  { 0 } diff ;
+
+: divz \ u -- set 
+  locals| u | 
+  0 u sqrtf 1+ 1
+  do u 0 i um/mod -rot 0=
+     if 2 +
+        i >zst 
+        swap >zst
+     else nip
+     then 
+  loop 2* negate >zst
+  set-sort reduce ;
+
+: psum \ n -- m
+  dup isp if exit then
+  primefactors 1
+  do + loop ; \ sum of all prime factors
+
+: ismp \ n -- flag
+  dup isp 0=
+  if drop false 
+  else 1+ oddpart nip 1 = 
+  then ; \ is Mersenne prime
+
 \ -------------------------- 
 false [if]
 [defined] sp0 0= [if]
