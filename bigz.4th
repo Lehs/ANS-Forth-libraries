@@ -159,7 +159,7 @@ r0 constant rp0
   sfacset bfac ;
 
 \ -------------------------- 
-
+false [if]
 [defined] sp0 0= [if]
 s0 constant sp0
 r0 constant rp0
@@ -170,3 +170,4 @@ r0 constant rp0
 
 100000 cells new-data-stack
 100001 cells allocate throw 100000 cells + align rp0 ! q 
+[then]
