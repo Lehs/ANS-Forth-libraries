@@ -950,9 +950,14 @@ variable flag22
 \ xsi^[s*2^j]=-1[mod u]
 \ then u is pseudoprime.
 
-: bdupisprime \ b -- b flag
+: bmillerx \ u -- u f
+  4 s>b b2dup< bdrop if b>s 1 > exit then
+  bdupeven if false exit then
+  bmiller ;
+
+: bdupisprime \ b -- b flag 
   len1 cell >
-  if bmiller 
+  if bmillerx 
   else bdup b>s isprime
   then ;
 
