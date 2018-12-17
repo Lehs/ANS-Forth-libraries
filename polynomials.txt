@@ -1,31 +1,31 @@
-            x+1 irr
-         x²+  1	irr
+            x+1         irr
+         x²+  1         irr
          x²+x+1	irr
-      x³+     1 IRR
+      x³+     1         IRR
       x³+   x+1	irr
       x³+x²+  1	irr
       x³+x²+x+1 	(x²+1)(x+1)
-   x⁴+        1 irr
+   x⁴+        1         irr
    x⁴+      x+1	irr
    x⁴+   x²+  1 	(x²+x+1)(x²-x+1)
    x⁴+x³+     1	irr
    x⁴+x³+   x+1 
    x⁴+x³+x²+  1	irr
-   x⁴+x³+x²+x+1 irr
-   x⁴+   x²+x+1 irr
+   x⁴+x³+x²+x+1         irr
+   x⁴+   x²+x+1         irr
 x⁵+           1 
 x⁵+x⁴+        1 
 x⁵+   x³+     1	irr
 x⁵+      x²+  1	irr
 x⁵+         x+1 
 x⁵+x⁴+      x+1 
-x⁵+   x³+   x+1 irr
+x⁵+   x³+   x+1         irr
 x⁵+      x²+x+1 
 x⁵+   x³+x²+  1	irr
 x⁵+x⁴+x³+     1
-x⁵+x⁴+   x²+  1 irr
+x⁵+x⁴+   x²+  1         irr
 x⁵+x⁴+      x+1
 x⁵+x⁴+x³+   x+1	irr
-x⁵+x⁴+x³+x²+  1 irr
-x⁵+   x³+x²+x+1 irr
+x⁵+x⁴+x³+x²+  1         irr
+x⁵+   x³+x²+x+1         irr
 x⁵+x⁴+x³+x²+x+1
