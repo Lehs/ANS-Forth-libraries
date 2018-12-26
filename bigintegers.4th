@@ -558,9 +558,13 @@ variable borrow
   ad mb + ad n move
   mb negate bvp @ +! ;
 
-: bsl \ n i -- n1 n0        big shift left, n < bits
-  2dup bits swap - rshift
-  -rot lshift ;
+: bsl \ n i -- n1 n0        big shift left, n < cell, i<bits
+  dup 
+  if 2dup bits swap - rshift
+     -rot lshift 
+  else swap
+  then ;
+
 
 : bsr \ n i -- n1 n0
   2dup rshift -rot
@@ -578,7 +582,8 @@ variable borrow
   bits/mod swap 0 locals| a b |
   nextfree first
   do i @ b bsl a or i ! to a cell
-  +loop bcells* <top ;
+  +loop a nextfree ! cell bvp @ +!
+  bcells* <top ;
 
 : bor \ b1 b2 -- b1Vb2    len2>=len1
   len2 len1 - nextfree over bvp @ +! swap erase
