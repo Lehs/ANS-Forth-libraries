@@ -120,7 +120,8 @@ r0 constant rp0
   0                           \ count of the number of elements
   begin pi_plim 1 sfac ?dup 
   while >zst 2 - bnip
-  repeat >zst reduce ;
+  repeat 1- >zst ;
+  \ list of single factors, set, and the resting big number b'
 
 1k bvariable alpha
 1k bvariable beta
@@ -157,6 +158,8 @@ r0 constant rp0
 
 : bsfactors \ w -- v1 ... vn set
   sfacset bfac ;
+\ set is a list of single divisors
+\ v1 ... vn is big divisors on stack
 
 : isq  sqr ;             \ is perfect square: n -- flag
 : isqf  sqrfree ;        \ is square free: n -- flag
