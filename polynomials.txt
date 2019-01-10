@@ -1,7 +1,7 @@
             x+1         irr
          x²+  1         irr
          x²+x+1	irr
-      x³+     1         (x+1)|(x³+1)
+      x³+     1         (x+1)(x²-x+1)
       x³+   x+1	irr
       x³+x²+  1	irr
       x³+x²+x+1 	(x²+1)(x+1)
@@ -9,7 +9,7 @@
    x⁴+      x+1	irr
    x⁴+   x²+  1 	(x²+x+1)(x²-x+1)
    x⁴+x³+     1	irr
-   x⁴+x³+   x+1         (x+1)|(x⁴+x³+x+1)
+   x⁴+x³+   x+1         (x+1)(x³+1)
    x⁴+x³+x²+  1	irr
    x⁴+x³+x²+x+1         irr
    x⁴+   x²+x+1         irr
