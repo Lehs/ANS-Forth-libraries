@@ -3023,6 +3023,40 @@ false [if]
 : vor \ vect -- flag
   zst>> cs 1 ?do or loop ;
 
+: ldivide \ -- q r
+  zst> zst@ swap >zst 
+  yst> yst@ swap >yst
+  /mod swap ;
+
+: lclean \ --
+  xst setdrop yst setdrop ;
+
+: lbuild \ v n q -- v' n+1
+  dup >xs 1 under+ 
+  yst zst setcopy ps* v- ;
+
+: lnodiv \ --
+  drop 0
+  ?do xsdrop loop false ;
+
+: p/ \ v1 v2 -- v1/v2 flag
+  false locals| flag | 
+  degree zst yst setmove 
+  degree zst xst setcopy 
+  over 1+ vcutr                           \ w 
+  2 + 2 under+ swap 0 -rot 
+  do ldivide 
+     if true to flag leave then 
+     lbuild 
+     vshiftr ( i getcoeff ) zswap vmerge  \ w'
+  loop flag if lclean lnodiv exit then
+  ldivide if lclean lnodiv exit then
+  lbuild vor lclean
+  ( over 0 ?do xs> loop ) nip 0= ;
+\ flag is true if v2 divides v1
+\ else result is irrelevant
+
+false [if] faulty code
 : p/ \ v1 v2 -- v1/v2 flag
   degree zst yst setmove
   degree zst xst setcopy
@@ -3042,7 +3076,7 @@ false [if]
   ( over 0 ?do xs> loop ) nip 0= ;
 \ flag is true if v2 divides v1
 \ else the division is irrelevant
-
+[then]
 \ auto definition of polynomial
 : makepoly \ vect ad n --  name of polynomial
   cr ." : " type space 
