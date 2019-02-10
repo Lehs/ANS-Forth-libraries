@@ -3126,10 +3126,11 @@ false [if]
 1000 value xlim
 
 : isirr \ vect -- vect flag 
+  lcoeff 0= if degree 1 = gcoeff abs 1 = and exit then
   zdup coeffgcd 1 <> if false exit then
-  iseisenstein if true exit then
   degree 0= if gcoeff isp exit then 
   degree 1 = if true exit then 
+  iseisenstein if true exit then
   fixdiv degree 0 0 locals| posp negp n d | 
   0 sbpolyn d bs/mod drop bisprime 
   if xs@
