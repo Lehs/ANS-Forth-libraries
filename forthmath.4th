@@ -570,7 +570,6 @@ breaknumbers cells allocate throw constant breaks
   until r> drop nip ;
 \ number of primes less than or equal than x 
 
-
 \ Gaussian integers
 
 : gnorm \ a b -- u
@@ -2834,7 +2833,7 @@ variable sta#
 ; \ mu(a*b)=mu(a)+mu(b)
 
 
-\ Polynomials 1
+\ Polynomials
 
 \ Dynamical allocation of arrays
 
@@ -2861,7 +2860,7 @@ variable sta#
 
 : da. \ vect -- 
   >da 0
-  do dup i cells + @ .
+  ?do dup i cells + @ .
   loop zdrop drop ;
 \ print the coefficients
 
@@ -2889,8 +2888,8 @@ true value lowterm
 : p. \ vect --
   true to lowterm
   >da 0 
-  do i over i cells + @ .term
-  loop zdrop drop ;
+  ?do i over i cells + @ .term
+  loop zdrop drop space ;
 
 \ Greatest common divisors for multiple integers
 
@@ -2903,6 +2902,7 @@ true value lowterm
 \ Calculation with polynomials
 
 : polynom \ ad n m -- m' 
+  over 1 = if 2drop @ exit then
   locals| m | cells over + cell- 
   dup @ -rot cell- 
   ?do m * i @ + -cell +loop ; 
@@ -2915,6 +2915,8 @@ true value lowterm
   dup abs s>b 0< >xs ;
 
 : sbpolynom \ ad n m -- sb
+  over 1 =
+  if 2drop @ dup 0< >xs abs s>b exit then
   locals| m | cells over + cell- 
   dup @ s>sb cell- 
   ?do m sbs* i @ s>sb sb+ -cell +loop ; 
@@ -3056,27 +3058,6 @@ false [if]
 \ flag is true if v2 divides v1
 \ else result is irrelevant
 
-false [if] faulty code
-: p/ \ v1 v2 -- v1/v2 flag
-  degree zst yst setmove
-  degree zst xst setcopy
-  over 1+ vcutr                           \ w
-  2 + 2 under+ swap 0 -rot
-  do zst> zst@ swap >zst 
-     yst> yst@ swap >yst /
-     dup >xs 1 under+ 
-     yst zst setcopy ps* v- 
-     vshiftr ( i getcoeff ) zswap vmerge  \ w'
-  loop
-  zst> zst@ swap >zst 
-  yst> yst@ swap >yst / dup
-  >xs 1 under+ 
-  yst zst setcopy ps* v- vor
-  xst setdrop yst setdrop
-  ( over 0 ?do xs> loop ) nip 0= ;
-\ flag is true if v2 divides v1
-\ else the division is irrelevant
-[then]
 \ auto definition of polynomial
 : makepoly \ vect ad n --  name of polynomial
   cr ." : " type space 
@@ -3142,15 +3123,17 @@ false [if] faulty code
      loop 
   then flag ;
 
-2000 value xlim
+1000 value xlim
 
 : isirr \ vect -- vect flag 
+  zdup coeffgcd 1 <> if false exit then
   iseisenstein if true exit then
   degree 0= if gcoeff isp exit then 
-  degree 1 = if zdup coeffgcd 1 = exit then 
+  degree 1 = if true exit then 
   fixdiv degree 0 0 locals| posp negp n d | 
   0 sbpolyn d bs/mod drop bisprime 
-  if xs@ if negp 1+ to negp else posp 1+ to posp then
+  if xs@
+     if negp 1+ to negp else posp 1+ to posp then
   then xsdrop
   xlim 1
   do i sbpolyn d bs/mod drop bisprime
@@ -3304,7 +3287,7 @@ false [if] faulty code
   clim random clim 2/ - ;
 
 : racos \ m -- k1...km
-  0 do raco loop ;
+  0 ?do raco loop ;
 
 : getirrvar \ u -- vect
   locals| u |
@@ -3316,7 +3299,7 @@ false [if] faulty code
 
 : getirr \ -- vect
   begin ( rlim racos ) rrzs
-     divcofac isirr 0=
+     degree if divcofac isirreducible 0= else true then
   while zdrop
   repeat ;
 
@@ -3336,7 +3319,32 @@ false [if] faulty code
 
 : get1irr ( raco dup raco dup abs rot abs ugcd / ) ;
 : get1any ( raco raco ) ;
-: getpol ( rlim 1+ random 2 + racos 1 or ) ;
+
+: getpol \ -- v
+  begin ( rlim 1+ random 2 + racos 1 or ) zst@ -3 >=
+  while zdrop 
+  repeat ;
+
 : getreg getpol divcofac ;
 : getred begin getreg isirr 0= until ;
 
+: co<2 \ v -- v flag
+  >da cells over + swap true -rot
+  do i @ abs 1 >
+     if 0= leave
+     then cell
+  +loop ;
+
+: getreg0 \ -- vect
+  getreg 1 >da drop ! ;
+
+: .trip \ --
+  begin getreg0 getreg0 
+     zover zover p* co<2 0=
+  while zdrop zdrop zdrop
+  repeat p.
+  degree zswap degree <
+  if zswap then p. p. ;
+
+: pp \ n --
+  0 do cr .trip loop ;  
