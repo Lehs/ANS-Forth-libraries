@@ -2886,6 +2886,7 @@ true value lowterm
   cells potence + count type ; 
 
 : p. \ vect --
+  degree 0= lcoeff 0= and if 0 . zdrop exit then
   true to lowterm
   >da 0 
   ?do i over i cells + @ .term
@@ -3125,13 +3126,13 @@ false [if]
 
 1000 value xlim
 
-: isirr \ vect -- vect flag 
-  lcoeff 0= degree 0> and
-  if degree 1 = gcoeff abs 1 = and exit then
-  zdup coeffgcd 1 <> if false exit then
+: isirr \ vect -- vect flag    no empty list
   degree 0= if gcoeff isp exit then 
+  lcoeff 0= if degree 1 = gcoeff abs 1 = and exit then
+  zdup coeffgcd 1 <> if false exit then
   degree 1 = if true exit then 
   iseisenstein if true exit then
+\ algorithm
   fixdiv degree 0 0 locals| posp negp n d | 
   0 sbpolyn d bs/mod drop bisprime 
   if xs@
@@ -3146,7 +3147,6 @@ false [if]
      then xsdrop 
      posp n > negp n > or if leave then
   loop posp n > negp n > or ; 
-
 
 : nopsqr \ x p -- x'     p|x
   begin 2dup /mod swap 0=
