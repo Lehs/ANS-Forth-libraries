@@ -2885,6 +2885,9 @@ true value lowterm
   then false to lowterm 
   cells potence + count type ; 
 
+: degree \ vect -- vect n
+  zst@ cs 1- ;
+
 : p. \ vect --
   degree 0= lcoeff 0= and if 0 . zdrop exit then
   true to lowterm
@@ -3004,9 +3007,6 @@ false [if]
   >da cells over + swap
   do i @ n / i ! cell +loop ;
 \ Divide polynomial with integer
-
-: degree \ vect -- vect n
-  zst@ cs 1- ;
 
 \ long division
 
@@ -3133,7 +3133,7 @@ false [if]
   zdup coeffgcd 1 <> if false exit then
   degree 1 = if true exit then 
   iseisenstein if true exit then
-\ algorithm
+\ ---
   fixdiv degree 0 0 locals| posp negp n d | 
   0 sbpolyn d bs/mod drop bisprime 
   if xs@
