@@ -3112,6 +3112,7 @@ false [if]
 
 : iseisenstein \ vect -- vect flag 
   lcoeff 0= if false exit then
+  degree 0= if false exit then
   zdup zst> 2 + zst> abs false 0 locals| p flag  an | 
   >zst coeffgcd dup an ugcd 1 <>
   if zdrop drop false exit then
