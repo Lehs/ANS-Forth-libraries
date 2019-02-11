@@ -2888,6 +2888,14 @@ true value lowterm
 : degree \ vect -- vect n
   zst@ cs 1- ;
 
+: gcoeff \ vect -- vect n
+  zst @ cell - @ ;
+\ Gives the coefficient of the greatest power
+
+: lcoeff \ vect -- vect n
+  >da drop @ ;
+\ Gives the coefficient of the constant term
+
 : p. \ vect --
   degree 0= lcoeff 0= and if 0 . zdrop exit then
   true to lowterm
@@ -2933,14 +2941,6 @@ true value lowterm
 : sbpolyn \ vect m -- vect sb
   >da rot sbpolynom ;
 \ m' is the evaluation of m with the polynomial vect
-
-: gcoeff \ vect -- vect n
-  zst @ cell - @ ;
-\ Gives the coefficient of the greatest power
-
-: lcoeff \ vect -- vect n
-  >da drop @ ;
-\ Gives the coefficient of the constant term
 
 : rrzs \ vect1 -- vect2  "reduce right zeroes"
   begin gcoeff 0= 
