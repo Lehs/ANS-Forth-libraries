@@ -3230,7 +3230,11 @@ false [if]
   dup @ >r cell- r> 1 2swap
   do a b q* i @ 1 q+ -cell +loop ; 
 
-: getpospairs \ vect -- vect set
+: getpospairs \ vect -- vect set numb (of zero roots)
+  0
+  begin lcoeff 0=
+  while 1+ ( 0 1 ) p/ drop 
+  repeat
   lcoeff abs gcoeff abs divz divz
   cartprod ;
 
@@ -3239,7 +3243,7 @@ false [if]
 
 : haverationalroots \ vect -- vect flag
   lcoeff 0= if true exit then
-  getpospairs zst yst setmove
+  getpospairs drop zst yst setmove
   begin yst@
   while ysplit
      getypair 2dup ugcd 1 = 
@@ -3252,10 +3256,10 @@ false [if]
      then 
   repeat yst> ; 
 
-: setofroots \ vect -- vect set
-  lcoeff 0= if true exit then
+: setofroots \ vect -- vect set numb
   getpospairs 
-  zst yst setmove xst @
+  zst yst setmove xst @ over 
+  if ( 0 1 ) zst xst setmove then
   begin yst@
   while ysplit
      getypair 2dup ugcd 1 = 
@@ -3276,12 +3280,27 @@ false [if]
 
 : .roots \ set -- 
   zst> cs 3 / 0 
-  do zst> drop zst> zst> .root space loop 
-;
+  do zst> drop zst> zst> .root space loop ;
 
 : isirreducible \ vect -- vect flag
   haverationalroots degree 1 > and
   if false else isirr then ;
+
+: 0s 0 ?do 0 loop ;
+
+: anapol \ vect --   analyze polynomial
+  cr zdup ." ( "da. ." )"
+  isirreducible cr
+  if ." irreducible" cr p.
+  else ." reducible" 
+     haverationalroots cr
+     if ." rational roots "
+        setofroots here ! .roots 
+        cr ( here @ 0s 1 ) p* p.
+     else ." no rational roots"
+        cr p. 
+     then
+  then ;
 
 \ Testing --------------------------------
 
@@ -3309,7 +3328,7 @@ false [if]
   repeat ;
 
 : geteis \ -- vect
-  begin ( rlim racos ) rrzs
+  begin ( rlim 1+ racos ) rrzs
      divcofac iseisenstein 0=
   while zdrop
   repeat ;
@@ -3326,12 +3345,12 @@ false [if]
 : get1any ( raco raco ) ;
 
 : getpol \ -- v
-  begin ( rlim 1+ random 2 + racos 1 or ) zst@ -3 >=
+  begin ( rlim 1+ random 2 + racos 1 or ) degree 1 <
   while zdrop 
   repeat ;
 
-: getreg getpol divcofac ;
-: getred begin getreg isirr 0= until ;
+: getprim getpol divcofac ;
+: getred begin getprim isirr while zdrop repeat ;
 
 : co<2 \ v -- v flag
   >da cells over + swap true -rot
@@ -3340,11 +3359,11 @@ false [if]
      then cell
   +loop ;
 
-: getreg0 \ -- vect
-  getreg 1 >da drop ! ;
+: getprim0 \ -- vect
+  getprim 1 >da drop ! ;
 
 : .trip \ --
-  begin getreg0 getreg0 
+  begin getprim0 getprim0 
      zover zover p* co<2 0=
   while zdrop zdrop zdrop
   repeat p.
@@ -3353,3 +3372,4 @@ false [if]
 
 : pp \ n --
   0 do cr .trip loop ;  
+
