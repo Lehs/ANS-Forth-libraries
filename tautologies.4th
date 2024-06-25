@@ -27,7 +27,7 @@ base !
 : v or ;
 : <+> xor ;
 
-: tautology? if ." is " else ." isn't " then ." a tautology" ;
+: tautology? true = if ." is " else ." isn't " then ." a tautology" ;
 
 \ examples:
 \ p q v p -> tautology?
